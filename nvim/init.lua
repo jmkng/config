@@ -17,7 +17,6 @@ vim.o.shiftwidth = 4
 vim.o.shiftround = true
 vim.o.expandtab = true
 vim.o.ignorecase = true
-vim.o.cursorline = false
 --vim.o.winborder = "rounded"
 --vim.o.completeopt = "menu,menuone,noselect"
 vim.opt.signcolumn = "no"

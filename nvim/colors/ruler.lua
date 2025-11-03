@@ -197,7 +197,7 @@ local colors = {
 --
 -- Ruler groups (ex. @ruler.mutable) should generally use higher contrast colors,
 -- to ensure they are highly visible.
-local sbg = colors.gray.L20    -- Shortcut for common bg color
+local sbg = colors.gray.L20     -- Shortcut for common bg color
 local soff_bg = colors.gray.L15 -- Shortcut for status line, etc
 
 local rules = {
@@ -211,6 +211,7 @@ local rules = {
 
     StatusLine = { dark = { fg = colors.gray.L100, bg = colors.gray.L0, bold = false } },
     StatusLineNC = { dark = { fg = colors.gray.L60, bg = soff_bg, bold = false } },
+    StatusLineQuickFix = { dark = { fg = colors.red.L85 } },
 
     WinSeparator = { dark = { fg = soff_bg, bg = soff_bg, bold = false } },
 

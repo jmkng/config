@@ -1,75 +1,51 @@
--- Move to symbol definition. No builtin in 0.11 for this?
--- This *was* grd. It not overwrites the built-in "gd" which seems
--- to do the same thing, but worse.
-vim.keymap.set('n', 'gd', vim.lsp.buf.definition, {})
--- LSP hover.
--- Does not change default bind, but adds additional close events,
--- otherwise it won't go away when switching buffers. (0.11.3)
--- vim.keymap.set('n', 'K', function()
---     vim.lsp.buf.hover({
---         border = 'rounded',
---         --close_events = { 'CursorMoved', 'BufLeave', 'WinLeave' },
---         focusable = true,
---     })
--- end)
--- Remap diagnostic float.
--- vim.keymap.set('n', 'grh', function()
---     -- Currently diag.lua runs the same command after a timeout.
---     -- If these two commands differ you may start to see a jitter as the window changes.
---     -- Maybe just create a function for this somewhere of the automatic diag window sticks around.
---     vim.diagnostic.open_float(nil, { focusable = false, scope = "cursor" })
--- end)
+vim.keymap.set('n', '<C-b>n', ':bnext<CR>', { desc = "Move to next buffer" })
+vim.keymap.set('n', '<C-b>p', ':bprev<CR>', { desc = "Move to previous buffer" })
+vim.keymap.set('n', '<C-b>d', ':bd<CR>', { desc = "Delete current buffer" })
 
+vim.keymap.set('n', '<C-w><C-c>', ':close<CR>', {})
+vim.keymap.set('n', '<C-w>v', ':vnew<CR>', {})
+vim.keymap.set('n', '<C-w><C-v>', ':vnew<CR>', {})
 
--- Diagnostic next/prev + float.
--- Doesn't change the default keybindings, but allows for n/shift-n to continue.
--- vim.keymap.set('n', ']d', function()
---     vim.diagnostic.jump({ count = 1, float = true })
--- end)
--- vim.keymap.set('n', '[d', function()
---     vim.diagnostic.jump({ count = -1, float = true })
--- end)
-vim.keymap.set('n', '<S-tab>', ':Explore<CR>')
-vim.keymap.set('n', '@@', '@:')            -- Repeat last ex command.
-vim.keymap.set('n', '`', '<C-w>w')         -- Forward/backward window toggle.
-vim.keymap.set('n', '~', '<C-w>W')
-vim.keymap.set('n', '<S-h>', ':bprev<CR>') -- Forward/backward buffer toggle.
-vim.keymap.set('n', '<S-l>', ':bnext<CR>')
-vim.keymap.set('n', '<leader>s', ':up<CR>')
-vim.keymap.set('n', '<C-h>', '<C-w>h')
-vim.keymap.set('n', '<C-j>', '<C-w>j')
-vim.keymap.set('n', '<C-k>', '<C-w>k')
-vim.keymap.set('n', '<C-l>', '<C-w>l')
-local window_opts = { noremap = true }
-vim.keymap.set('n', '<C-S-h>', ':vertical resize -2<CR>', window_opts)
-vim.keymap.set('n', '<C-+>', ':vertical resize +2<CR>', window_opts)
-vim.keymap.set('n', '<C-S-k>', ':resize -2<CR>', window_opts)
-vim.keymap.set('n', '<C-S-j>', ':resize +2<CR>', window_opts)
-vim.keymap.set('n', '<C-S-=>', '<C-w>=', window_opts)
-vim.keymap.set('n', '<leader>x', ':nohlsearch<CR>')
--- vim.keymap.set('v', '<leader>y', '"+y')
--- vim.keymap.set('n', '<leader>p', '"+p')
-vim.keymap.set('n', '!', ':!', { noremap = true })
-vim.keymap.set('n', '<leader>f', ':Pick files<Cr>')
-vim.keymap.set("n", "<leader>gf", function()
+vim.keymap.set('n', 'grd', vim.lsp.buf.definition, {})
+vim.keymap.set("n", "grf", function()
     vim.lsp.buf.format { async = true }
 end, { desc = "Format current buffer" })
-vim.keymap.set('n', '<leader>r', function()
-    vim.cmd("ConfigReload")
-end, { noremap = true })
-vim.keymap.set('n', '<leader>l', function()
-    vim.o.cursorline = not vim.o.cursorline
-    vim.notify("cursorline: " .. (vim.o.cursorline and "on" or "off"), vim.log.levels.INFO, {})
+vim.keymap.set('n', 'grhc', function()
+    vim.diagnostic.open_float(nil, { focusable = false, scope = "cursor" })
 end)
-vim.keymap.set('t', '<C-space>', function()
-    local keys = vim.api.nvim_replace_termcodes("<C-\\><C-n>", true, false, true)
-    vim.api.nvim_feedkeys(keys, "n", true)
-    vim.cmd('bd!')
-end, { noremap = true })
-vim.keymap.set('n', '<C-space>', function()
-    vim.cmd('terminal')
-    vim.api.nvim_feedkeys("i", "n", false)
-end, { noremap = true })
+vim.keymap.set('n', 'grhl', function()
+    vim.diagnostic.open_float(nil, { focusable = false, scope = "line" })
+end)
+vim.keymap.set('n', 'grhb', function()
+    vim.diagnostic.open_float(nil, { focusable = false, scope = "buffer" })
+end)
+
+vim.keymap.set('n', '<leader>!', function()
+    local last_cmd = vim.fn.getreg(':')
+    if last_cmd ~= '' then
+        vim.api.nvim_feedkeys(":" .. last_cmd .. "!\n", 'n', false)
+    else
+        vim.notify("no previous Ex command", vim.log.levels.INFO, {})
+    end
+end, { desc = "Repeat last Ex command with ! (force) behavior" })
+vim.keymap.set('n', '<leader>e', function()
+    if vim.bo.filetype == 'netrw' then
+        vim.cmd('bd')
+    else
+        vim.cmd('Explore')
+    end
+end, { desc = "Toggle netrw" })
+vim.keymap.set('n', '<leader>c', function()
+    vim.o.cursorline = not vim.o.cursorline
+    vim.notify("cursorline " .. (vim.o.cursorline and "on" or "off"), vim.log.levels.INFO, {})
+end, { desc = "Toggle cursorline" })
+vim.keymap.set('n', '<leader>s', ':up<CR>', { desc = "Write buffer (if modified)" })
+vim.keymap.set({ 'n', 'x' }, '<leader>y', '"+y', { desc = "Yank to system clipboard with \"+y" })
+vim.keymap.set('n', '<leader>Y', '"+Y', { desc = "Yank to system clipboard with \"+Y" })
+vim.keymap.set({ 'n', 'x' }, '<leader>p', '"+p', { desc = "Paste from system clipboard with \"+p" })
+vim.keymap.set('n', '<leader>P', '"+P', { desc = "Paste from system clipboard with \"+P" })
+vim.keymap.set('n', '<leader>/', ':nohlsearch<CR>')
+vim.keymap.set('n', '<leader>f', ':Pick files<Cr>')
 local ultrasight = require('ultrasight')
 vim.keymap.set('n', '<leader>u', function()
     ultrasight.toggle()
