@@ -19,7 +19,6 @@ vim.opt.guicursor:append({
     "o:hor50-Error",
 })
 
-
 --vim.cmd("hi clear")
 --if vim.fn.exists("syntax_on") == 1 then
 --    vim.cmd("syntax reset")
@@ -207,7 +206,7 @@ local rules = {
     NormalFloat = {
         dark = { bg = colors.gray.L0 },
     },
-    LineNr = { dark = { fg = colors.gray.L30, bg = sbg } },
+    LineNr = { dark = { fg = colors.gray.L50, bg = sbg } },
 
     StatusLine = { dark = { fg = colors.gray.L100, bg = colors.gray.L0, bold = false } },
     StatusLineNC = { dark = { fg = colors.gray.L60, bg = soff_bg, bold = false } },
@@ -215,16 +214,15 @@ local rules = {
 
     WinSeparator = { dark = { fg = soff_bg, bg = soff_bg, bold = false } },
 
-    EndOfBuffer = { dark = { fg = colors.cyan.L50, bg = colors.gray.L30 } },
+    EndOfBuffer = { dark = { fg = colors.yellow.L50, bg = colors.gray.L30 } },
 
     FloatBorder = {
         dark = { fg = colors.gray.L0, bg = colors.gray.L0 },
     },
     CursorColumn = { dark = { bg = "NONE" } },
-    --CursorLine = { dark = { bg = colors.gray.L20 } },
-    --CursorLineNr = { dark = { fg = colors.gray.L80, bg = colors.gray.L20 } },
     CursorLine = { dark = { bg = colors.gray.L35 } },
-    CursorLineNr = { dark = { fg = colors.gray.L30, bg = "NONE" } },
+    CursorLineNr = { dark = { fg = colors.gray.L100, bg = colors.gray.L35 } },
+    CursorLineSign = { dark = { bg = colors.gray.L35 } },
     FoldColumn = { dark = { fg = colors.gray.L100, bg = colors.gray.L30 } },
     Folded = { dark = { fg = colors.gray.L100, bg = colors.gray.L30 } },
     ColorColumn = { dark = { bg = colors.gray.L17 } },

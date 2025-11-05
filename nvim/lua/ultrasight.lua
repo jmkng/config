@@ -3,7 +3,7 @@ local M = {}
 M.enabled = false
 M.config = {
     socket_path = nil,
-    delay = 500,
+    delay = 250
 }
 
 local server
@@ -18,77 +18,64 @@ local function broadcast(text)
     for _, client in ipairs(clients) do
         if not client:is_closing() then
             client:write(text)
+        else
+            vim.notify("[ultrasight] skipped a closing client", vim.log.levels.DEBUG)
         end
     end
 end
 
 local last_hover = ""
-local function show_hover_or_signature()
+
+local function trigger_contextual()
+    local mode = vim.api.nvim_get_mode().mode
     local params = vim.lsp.util.make_position_params(0, 'utf-8')
-    local bufnr = 0
+    if mode == 'i' then
+        vim.lsp.buf_request(0, "textDocument/signatureHelp", params, function(err1, result_sig, _, _)
+            if err1 or not result_sig or not result_sig.signatures or #result_sig.signatures == 0 then return end
 
-    local sent_message = false
-    vim.lsp.buf_request(0, "textDocument/hover", params, function(err, result)
-        if err or not (result and result.contents) then return end
+            local lines2 = {}
+            for _, s in ipairs(result_sig.signatures) do
+                table.insert(lines2, s.label)
+                if s.documentation then
+                    local doc_lines = vim.lsp.util.convert_input_to_markdown_lines(s.documentation)
+                    vim.list_extend(lines2, vim.lsp.util.trim_empty_lines(doc_lines))
+                end
+            end
 
-        local lines = vim.lsp.util.convert_input_to_markdown_lines(result.contents)
-        lines = vim.lsp.util.trim_empty_lines(lines)
-        if vim.tbl_isempty(lines) then return end
-        local text = table.concat(lines, "\n")
-
-        if text ~= last_hover then
-            sent_message = true
+            if #lines2 == 0 then return end
+            local text = table.concat(lines2, "\n")
+            if text == last_hover then return end
             last_hover = text
             broadcast(text)
-        end
-    end)
-
-    if sent_message then
+        end)
         return
-
-            vim.lsp.buf_request(bufnr, "textDocument/signatureHelp", params, function(err, result)
-                if err or not result or not result.signatures or #result.signatures == 0 then
-                    return
-                end
-
-                local lines = {}
-                for _, sig in ipairs(result.signatures) do
-                    table.insert(lines, sig.label)
-                    if sig.documentation then
-                        local doc_lines = vim.lsp.util.convert_input_to_markdown_lines(sig.documentation)
-                        vim.list_extend(lines, vim.lsp.util.trim_empty_lines(doc_lines))
-                    end
-                end
-
-                if #lines == 0 then return end
-
-                local text = table.concat(lines, "\n")
-                if text == last_hover then return end
-                last_hover = text
-
-                sent_message = true
-                broadcast(text)
-
-                -- Update buffer immediately?
-
-                -- local buf = your_viewer_buf
-                -- vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
-                -- vim.api.nvim_buf_set_option(buf, "filetype", "markdown")
-                -- vim.lsp.util.stylize_markdown(buf, lines)
-                -- vim.api.nvim_win_set_cursor(0, { 1, 0 })
-            end)
     end
+    vim.lsp.buf_request(0, "textDocument/hover", params, function(err, result_hover, _, _)
+        if err or not (result_hover and result_hover.contents) then return end
+
+        local contents = result_hover.contents
+        local lines = vim.lsp.util.convert_input_to_markdown_lines(contents)
+        lines = vim.lsp.util.trim_empty_lines(lines)
+
+        if #lines == 0 then return end
+
+        local text = table.concat(lines, "\n")
+        if text == last_hover then return end
+        last_hover = text
+        broadcast(text)
+    end)
 end
 
-local function show_hover_debounced()
+
+local function trigger_contextual_delay()
     if not hover_timer then
         hover_timer = vim.loop.new_timer()
     else
-        hover_timer:stop() -- reset timer
+        hover_timer:stop()
     end
 
     hover_timer:start(M.config.delay, 0, vim.schedule_wrap(function()
-        show_hover_or_signature()
+        trigger_contextual()
     end))
 end
 
@@ -129,16 +116,14 @@ function M.enable()
 
     M.enabled = true
 
-    id = vim.api.nvim_create_augroup(GROUP_NAME, { clear = true })
-    -- Normal mode events
-    vim.api.nvim_create_autocmd({ "CursorMoved", "CursorHold" }, {
+    local id = vim.api.nvim_create_augroup(GROUP_NAME, { clear = true })
+    vim.api.nvim_create_autocmd({ "CursorMovedI", "CursorHoldI", "CursorMoved", "CursorHold" }, {
         group = id,
-        callback = show_hover_debounced,
+        callback = trigger_contextual_delay,
     })
-    -- Insert mode events
-    vim.api.nvim_create_autocmd({ "CursorMovedI", "CursorHoldI" }, {
+    vim.api.nvim_create_autocmd({ "InsertEnter", "ModeChanged" }, {
         group = id,
-        callback = show_hover_debounced,
+        callback = trigger_contextual,
     })
 
     vim.notify("[ultrasight] connected to: " .. M.config.socket_path, vim.log.levels.INFO)
@@ -178,10 +163,21 @@ function M.disable()
 end
 
 function M.listen()
-    local buf = vim.api.nvim_create_buf(false, true)
-    vim.api.nvim_buf_set_name(buf, "[ULTRA IN]")
-    vim.api.nvim_buf_set_option(buf, "filetype", "markdown")
-    vim.api.nvim_win_set_buf(0, buf)
+    local bufname = "Ultrasight"
+    local buf = vim.api.nvim_get_current_buf()
+    local win = vim.api.nvim_get_current_win()
+
+    local line_count = vim.api.nvim_buf_line_count(buf)
+    local is_empty = (line_count == 1 and vim.api.nvim_buf_get_lines(buf, 0, 1, false)[1] == "")
+
+    if not is_empty then
+        vim.notify("[ultrasight] listen requires an empty buffer", vim.log.levels.ERROR)
+        return
+    end
+
+    vim.api.nvim_buf_set_name(buf, bufname)
+    vim.api.nvim_set_option_value("filetype", "markdown", { buf = buf })
+    vim.treesitter.start(buf, nil)
 
     local pipe = vim.uv.new_pipe(false)
     pipe:connect(M.config.socket_path, function(err)
@@ -196,11 +192,22 @@ function M.listen()
     pipe:read_start(function(err, data)
         if err or not data then return end
         vim.schedule(function()
-            vim.api.nvim_buf_set_lines(buf, 0, -1, false, {})
-            local lines = vim.split(data, "\n")
-            vim.api.nvim_buf_set_lines(buf, 0, -1, false, lines)
-            vim.lsp.util.stylize_markdown(buf, lines)
-            vim.api.nvim_win_set_cursor(0, { 1, 0 })
+            if not vim.api.nvim_buf_is_valid(buf) then
+                if not pipe:is_closing() then
+                    pipe:shutdown()
+                    pipe:close()
+                    vim.notify("[ultrasight] listener closed", vim.log.levels.DEBUG)
+                end
+                return
+            end
+
+            local lines = vim.split(data, "\n", { plain = true })
+            local md = vim.lsp.util.stylize_markdown(buf, lines)
+            vim.api.nvim_buf_set_lines(buf, 0, -1, false, md)
+
+            if vim.api.nvim_win_is_valid(win) then
+                vim.api.nvim_win_set_cursor(win, { 1, 0 })
+            end
         end)
     end)
 

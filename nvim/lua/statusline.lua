@@ -1,4 +1,4 @@
-vim.o.statusline = "%f %m %r %= %l:%c %p%% %#StatusLineQuickfix#%{v:lua.set_quickfix_status()}%* %{v:lua.set_ultrasight_status()}"
+vim.o.statusline = "%f %m %r %= %l:%c %p%% %#StatusLineQuickfix#%{v:lua.set_quickfix_status()}%* %#StatusLineUltrasight#%{v:lua.set_ultrasight_status()}%*"
 
 _G.set_quickfix_status = function()
     local qf = vim.fn.getqflist()
@@ -13,7 +13,7 @@ end
 
 _G.set_ultrasight_status = function()
     local ultrasight = require('ultrasight')
-    if ultrasight.enabled then return "[ULTRA OUT]" else return "" end
+    if ultrasight.enabled then return "[ULTRA]" else return "" end
 end
 
 vim.api.nvim_create_autocmd("User", {
