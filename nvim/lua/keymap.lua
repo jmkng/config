@@ -5,7 +5,7 @@ vim.keymap.set('n', '<C-b><C-p>', ':bprev<CR>', { desc = "Move to previous buffe
 vim.keymap.set('n', '<C-b>d', ':bd<CR>', { desc = "Delete current buffer" })
 vim.keymap.set('n', '<C-b><C-d>', ':bd<CR>', { desc = "Delete current buffer" })
 
-vim.keymap.set('n', '<C-w><C-c>', ':close<CR>', {})
+vim.keymap.set('n', '<C-w><C-c>', ':close<CR>', { desc = "Close window" })
 vim.keymap.set('n', '<C-w>v', ':vnew<CR>', {})
 vim.keymap.set('n', '<C-w><C-v>', ':vnew<CR>', {})
 
@@ -78,6 +78,12 @@ vim.keymap.set('n', '<leader>n', function()
     vim.o.nu = not vim.o.nu
     vim.notify("line numbers " .. (vim.o.nu and "on" or "off"), vim.log.levels.INFO, {})
 end, { desc = "Toggle cursorline" })
+vim.keymap.set('n', '<leader>q', function()
+    vim.cmd("close")
+end, { desc = "Close window" })
+vim.keymap.set('n', '<leader>o', function()
+    vim.cmd("only")
+end, { desc = "Make current window the only window" })
 --vim.keymap.set('i', '<C-b>', '<Left>', { desc = "Move left" })
 --vim.keymap.set('i', '<C-f>', '<Right>', { desc = "Move right" })
 --vim.keymap.set('i', '<C-p>', '<Up>', { desc = "Move up" })

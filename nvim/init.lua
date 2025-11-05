@@ -1,6 +1,6 @@
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
-vim.wo.number = true
+
 vim.o.clipboard = ''
 vim.o.timeoutlen = 1000
 vim.o.backspace = '2'
@@ -18,7 +18,10 @@ vim.o.shiftround = true
 vim.o.expandtab = true
 vim.o.ignorecase = true
 vim.o.completeopt = "menuone,noselect,noinsert,popup"
---vim.o.hidden = true
+
+vim.wo.number = true
+
+vim.opt.showmode = true
 vim.opt.signcolumn = "yes"
 vim.opt.shortmess:append({ I = true })
 
@@ -26,12 +29,10 @@ require("colorscheme")
 require("_lsp")
 require("statusline")
 require("keymap")
-require("command")
 require("netrw")
+require("command")
 require("treesitter")
---require("ultrasight").setup({
---    socket_path = "/tmp/ultrasight.sock",
---    delay = 250,
---})
-
+--local ultrasight = require("ultrasight")
+--ultrasight.setup()
+--/tmp/ultrasight.sock
 require("vendor.mini.completion").setup({})
