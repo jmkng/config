@@ -24,15 +24,16 @@ vim.wo.number = true
 vim.opt.showmode = true
 vim.opt.signcolumn = "yes"
 vim.opt.shortmess:append({ I = true })
+vim.o.switchbuf = "uselast"
 
-require("colorscheme")
-require("_lsp")
-require("statusline")
-require("keymap")
-require("netrw")
 require("command")
+require("statusline")
+require("_lsp")
+require("colorscheme")
+require("netrw")
 require("treesitter")
 --local ultrasight = require("ultrasight")
 --ultrasight.setup()
 --/tmp/ultrasight.sock
+require("keymap")
 require("vendor.mini.completion").setup({})

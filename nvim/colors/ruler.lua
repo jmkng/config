@@ -1,12 +1,3 @@
--- Ruler
---
--- This is a theme with "just enough" color and contrast.
--- It uses those colors to draw attention to things that may warrant attention.
---
--- TODO:
---      [x] Highlight mutable data (var)
---      [ ] Highlight undefined (Zig)
-
 vim.g.colors_name = "ruler"
 
 vim.opt.guicursor:append({
@@ -19,16 +10,11 @@ vim.opt.guicursor:append({
     "o:hor50-Error",
 })
 
---vim.cmd("hi clear")
---if vim.fn.exists("syntax_on") == 1 then
---    vim.cmd("syntax reset")
---end
-
 -- Groups
 --
 -- 1. Attention
 --
--- Ruler will try to highlight things that may warrant extra attention.
+-- Try to highlight things that may warrant extra attention.
 --
 -- Associated highlight groups:
 --      @ruler.mutable
@@ -38,14 +24,14 @@ vim.opt.guicursor:append({
 --
 -- 2. Danger
 --
--- Ruler will try to highlight usage of dangerous constructs.
+-- Try to highlight usage of dangerous constructs.
 --
 -- Associated highlight groups:
 --      TODO
 --
 -- Examples:
 --      1. Keyword "undefined" in, for example, Zig.
---      2. Unsafe blocks in Rust.
+--      2. Unsafe blocks in Rust. (Maybe? might be annoying)
 
 -- Uses a human readable color name (ex. blue)
 -- where each color is a table containing shades of that color organized by lightness,
@@ -77,6 +63,7 @@ local colors = {
         L100 = "#FFFFFF",
     },
     blue = {
+        L5 = "#000C18",
         L10 = "#001B35",
         L15 = "#00254B",
         L20 = "#003265",
@@ -97,19 +84,29 @@ local colors = {
         L95 = "#E5F2FF",
     },
     cyan = {
-        L12 = "#073236",
-        L30 = "#118089",
-        L40 = "#16A9B6",
-        L50 = "#1CD4E3",
-        L70 = "#78E5EF",
-        L60 = "#3FD1EF", -- Updated
-        L65 = "#5EE0EC",
-        L75 = "#8BEAF1",
-        L80 = "#A3EEF4",
-        L85 = "#BBF2F7",
-        L90 = "#D2F7FA",
+        L5 = "#031819",
+        L10 = "#052D30",
+        L12 = "#063438",
+        L15 = "#073F43",
+        L20 = "#0A575D",
+        L25 = "#0D6B73",
+        L30 = "#0F8089",
+        L35 = "#1297A2",
+        L40 = "#14AAB6",
+        L45 = "#17C0CE",
+        L50 = "#19D6E5",
+        L55 = "#2FDAE8",
+        L60 = "#46DEEA",
+        L65 = "#5DE2ED",
+        L70 = "#77E7F0",
+        L75 = "#8EEBF2",
+        L80 = "#A3EFF5",
+        L85 = "#BAF3F7",
+        L90 = "#D0F7FA",
+        L95 = "#E9FBFD",
     },
     teal = {
+        L5 = "#001919",
         L10 = "#003131",
         L15 = "#004C4C",
         L20 = "#006665",
@@ -127,8 +124,10 @@ local colors = {
         L80 = "#98FFFF",
         L85 = "#B3FFFF",
         L90 = "#CEFFFF",
+        L95 = "#E6FFFF",
     },
     yellow = {
+        L5 = "#181900",
         L10 = "#323301",
         L15 = "#494B02",
         L20 = "#606302",
@@ -149,45 +148,88 @@ local colors = {
         L95 = "#FEFFE7",
     },
     orange = {
-        L50 = "#D96E28",
-        L75 = "#ECB794",
-        L80 = "#F0C5A8",
-        L85 = "#F4D4BE",
-        L90 = "#F7E1D2",
+        L5 = "#170B04",
+        L10 = "#2C1508",
+        L15 = "#42200C",
+        L20 = "#55290F",
+        L25 = "#6E3513",
+        L30 = "#844017",
+        L35 = "#96491B",
+        L40 = "#AB531E",
+        L45 = "#C45E23",
+        L50 = "#D96927",
+        L55 = "#DD783C",
+        L60 = "#E08650",
+        L65 = "#E49668",
+        L70 = "#E8A47D",
+        L75 = "#ECB392",
+        L80 = "#F0C3A8",
+        L85 = "#F3D1BC",
+        L90 = "#F7E0D2",
+        L95 = "#FBEFE7",
     },
     red = {
-        L10 = "#340005",
-        L15 = "#4B0008",
-        L20 = "#67000B",
-        L25 = "#7E000D",
-        L30 = "#990010",
-        L35 = "#B20012",
-        L40 = "#CB0015",
-        L45 = "#E50018",
-        L50 = "#FF011B",
-        L55 = "#FF1930",
-        L60 = "#DD5357", -- use me
-        L65 = "#FF4D5F",
-        L70 = "#FF6676",
-        L75 = "#FF808D",
-        L80 = "#FF9B9E", -- don't overwrite me
-        L85 = "#FFB3BB",
-        L90 = "#FFCBD1",
+        L5 = "#160405",
+        L10 = "#2C090A",
+        L15 = "#3E0C0E",
+        L20 = "#541113",
+        L25 = "#6B1518",
+        L30 = "#80191D",
+        L35 = "#951D21",
+        L40 = "#AC2227",
+        L45 = "#BF252B",
+        L50 = "#D62C32",
+        L55 = "#D93D43",
+        L60 = "#DE555A",
+        L65 = "#E26A6E",
+        L70 = "#E68084",
+        L75 = "#EA9497",
+        L80 = "#FF9B9E",
+        L85 = "#F3C0C2",
+        L90 = "#F7D4D5",
+        L95 = "#FAE8E8",
     },
     purple = {
-        L50 = "#BD01FF",
-        L85 = "#EBB2FF",
+        L5 = "#130019",
+        L10 = "#270035",
+        L15 = "#37004B",
+        L20 = "#4C0066",
+        L25 = "#5F007F",
+        L30 = "#720099",
+        L35 = "#8400B1",
+        L40 = "#9800CC",
+        L45 = "#AB00E5",
+        L50 = "#BC00FD",
+        L55 = "#C51AFF",
+        L60 = "#CB34FF",
+        L65 = "#D14CFF",
+        L70 = "#D866FF",
+        L75 = "#DE7FFF",
+        L80 = "#E599FF",
+        L85 = "#ECB5FF",
         L90 = "#F2CCFF",
+        L95 = "#F9E6FF",
     },
     green = {
-        L20 = "#06613A",
-        L30 = "#099156",
-        L40 = "#0CBE71",
-        L50 = "#10EE8D",
-        L60 = "#3EF2A4",
-        L70 = "#70F6BC",
-        L80 = "#A0F9D2",
-        L90 = "#D0FCE9",
+        L5 = "#021A10",
+        L10 = "#032F1C",
+        L15 = "#05472A",
+        L20 = "#06623A",
+        L25 = "#087848",
+        L30 = "#098E55",
+        L35 = "#0BA763",
+        L40 = "#0CBF72",
+        L45 = "#0EDA82",
+        L50 = "#0FEF8E",
+        L55 = "#29F29B",
+        L60 = "#3FF3A5",
+        L65 = "#58F4B1",
+        L70 = "#6EF6BB",
+        L75 = "#88F7C7",
+        L80 = "#9DF9D1",
+        L85 = "#B6FADD",
+        L90 = "#CFFCE9",
+        L95 = "#E6FDF3",
     },
 }
 
@@ -196,8 +238,8 @@ local colors = {
 --
 -- Ruler groups (ex. @ruler.mutable) should generally use higher contrast colors,
 -- to ensure they are highly visible.
-local sbg = colors.gray.L20     -- Shortcut for common bg color
-local soff_bg = colors.gray.L15 -- Shortcut for status line, etc
+local sbg = colors.gray.L20
+local soff_bg = colors.gray.L15
 
 local rules = {
     Normal = {
@@ -207,15 +249,11 @@ local rules = {
         dark = { bg = colors.gray.L0 },
     },
     LineNr = { dark = { fg = colors.gray.L50, bg = sbg } },
-
     StatusLine = { dark = { fg = colors.gray.L100, bg = colors.gray.L0, bold = false } },
     StatusLineNC = { dark = { fg = colors.gray.L60, bg = soff_bg, bold = false } },
-    StatusLineQuickFix = { dark = { fg = colors.red.L85 } },
-
+    StatusLineQuickFix = { dark = { fg = colors.yellow.L85 } },
     WinSeparator = { dark = { fg = soff_bg, bg = soff_bg, bold = false } },
-
-    EndOfBuffer = { dark = { fg = colors.yellow.L50, bg = colors.gray.L30 } },
-
+    EndOfBuffer = { dark = { fg = colors.yellow.L75, bg = colors.gray.L30 } },
     FloatBorder = {
         dark = { fg = colors.gray.L0, bg = colors.gray.L0 },
     },
@@ -238,7 +276,7 @@ local rules = {
     ["@variable"] = { dark = { fg = colors.gray.L100 } },
     Identifier = { dark = { fg = colors.gray.L100 } },
     Function = { dark = { fg = colors.gray.L100, bold = false } },
-    Keyword = { dark = { fg = colors.blue.L75 } },
+    Keyword = { dark = { fg = colors.cyan.L75 } },
     Operator = { dark = { fg = colors.gray.L100, bold = false } },
     String = { dark = { fg = colors.green.L80, bold = false } },
     Number = { dark = { fg = colors.green.L80, bold = false } },
