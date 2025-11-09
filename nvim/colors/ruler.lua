@@ -1,5 +1,11 @@
 vim.g.colors_name = "ruler"
 
+local variants = {
+    GRAY = "gray",
+}
+
+local override = variants.GRAY -- Change me.
+
 vim.opt.guicursor:append({
     "n-c:blinkwait800-iCursor",
     "i-v:ver10-Cursor",
@@ -39,6 +45,7 @@ vim.opt.guicursor:append({
 local colors = {
     gray = {
         L0   = "#000000",
+        L5   = "#0D0D0D",
         L10  = "#191919",
         L12  = "#1E1E1E",
         L15  = "#252525",
@@ -51,7 +58,8 @@ local colors = {
         L35  = "#565656",
         L40  = "#616161",
         L45  = "#6F6F6F",
-        L50  = "#7B7B7B",
+        L50  = "#808080",
+        L55  = "#8B8B8B",
         L60  = "#969696",
         L65  = "#A7A7A7",
         L70  = "#AFAFAF",
@@ -238,61 +246,160 @@ local colors = {
 --
 -- Ruler groups (ex. @ruler.mutable) should generally use higher contrast colors,
 -- to ensure they are highly visible.
-local sbg = colors.gray.L20
-local soff_bg = colors.gray.L15
-
-local rules = {
+local themes = {
+    ["@ruler.mutable"] = {
+        dark = { fg = colors.cyan.L80 },
+        light = { fg = colors.cyan.L20 },
+        [variants.GRAY] = { fg = colors.cyan.L80 },
+    },
     Normal = {
-        dark = { fg = colors.gray.L100, bg = sbg },
+        dark = { fg = colors.gray.L90, bg = colors.gray.L0 },
+        light = { fg = colors.gray.L10, bg = colors.gray.L100 },
+        [variants.GRAY] = { fg = colors.gray.L90, bg = colors.gray.L25 },
     },
     NormalFloat = {
         dark = { bg = colors.gray.L0 },
+        [variants.GRAY] = { bg = colors.gray.L15 }
     },
-    LineNr = { dark = { fg = colors.gray.L50, bg = sbg } },
-    StatusLine = { dark = { fg = colors.gray.L100, bg = colors.gray.L0, bold = false } },
-    StatusLineNC = { dark = { fg = colors.gray.L60, bg = soff_bg, bold = false } },
-    StatusLineQuickFix = { dark = { fg = colors.yellow.L85 } },
-    WinSeparator = { dark = { fg = soff_bg, bg = soff_bg, bold = false } },
-    EndOfBuffer = { dark = { fg = colors.yellow.L75, bg = colors.gray.L30 } },
-    FloatBorder = {
-        dark = { fg = colors.gray.L0, bg = colors.gray.L0 },
+    Floatborder = {
+        dark = { fg = colors.gray.L100, bg = colors.gray.L0 },
+        [variants.GRAY] = { fg = colors.gray.L15, bg = colors.gray.L15 }
     },
-    CursorColumn = { dark = { bg = "NONE" } },
-    CursorLine = { dark = { bg = colors.gray.L35 } },
-    CursorLineNr = { dark = { fg = colors.gray.L100, bg = colors.gray.L35 } },
-    CursorLineSign = { dark = { bg = colors.gray.L35 } },
-    FoldColumn = { dark = { fg = colors.gray.L100, bg = colors.gray.L30 } },
-    Folded = { dark = { fg = colors.gray.L100, bg = colors.gray.L30 } },
-    ColorColumn = { dark = { bg = colors.gray.L17 } },
-    Directory = { dark = { fg = colors.gray.L100 } },
-    Comment = { dark = { fg = colors.orange.L75 } },
-    Ignore = { dark = { fg = colors.gray.L50 } },
-    WarningMsg = { dark = { fg = colors.yellow.L60 } },
-    ErrorMsg = { dark = { fg = colors.red.L60 } },
-    ModeMsg = { dark = { fg = colors.gray.L100, bold = true } },
-    MoreMsg = { dark = { fg = colors.gray.L100 } },
-    Todo = { dark = { fg = colors.purple.L90, bg = colors.purple.L50 } },
-    Error = { dark = { fg = colors.red.L90, bg = colors.red.L50 } },
-    ["@variable"] = { dark = { fg = colors.gray.L100 } },
-    Identifier = { dark = { fg = colors.gray.L100 } },
-    Function = { dark = { fg = colors.gray.L100, bold = false } },
-    Keyword = { dark = { fg = colors.cyan.L75 } },
-    Operator = { dark = { fg = colors.gray.L100, bold = false } },
-    String = { dark = { fg = colors.green.L80, bold = false } },
-    Number = { dark = { fg = colors.green.L80, bold = false } },
-    Float = { dark = { fg = colors.green.L80, bold = false } },
-    PreProc = { dark = { fg = colors.red.L80 } },
-    Special = { dark = { fg = colors.gray.L100 } },
-    SpecialKey = { dark = { fg = colors.cyan.L80 } },
-    Visual = { dark = { fg = colors.blue.L90, bg = colors.blue.L35 } },
-    Search = { dark = { fg = colors.yellow.L60, bg = colors.yellow.L20 } },
-    CurSearch = { dark = { fg = colors.gray.L10, bg = colors.yellow.L50 } },
-    IncSearch = { dark = { fg = colors.yellow.L10, bg = colors.yellow.L50, bold = true } },
-    Title = { dark = { fg = colors.gray.L100 } },
-    Question = { dark = { fg = colors.gray.L100 } },
-    NonText = { dark = { fg = colors.gray.L100 } },
-    ["@ruler.mutable"] = {
+    Pmenu = {
+        dark = { fg = colors.gray.L100, bg = colors.gray.L0 },
+        [variants.GRAY] = { fg = colors.gray.L100, bg = colors.gray.L15 }
+    },
+    PmenuSel = {
+        dark = { fg = colors.gray.L100, bg = colors.gray.L0 },
+        [variants.GRAY] = { fg = colors.gray.L0, bg = colors.gray.L90 }
+    },
+    LineNr = {
+        dark = { fg = colors.gray.L50, bg = colors.gray.L0 },
+        [variants.GRAY] = { fg = colors.gray.L50, bg = colors.gray.L25 }
+    },
+    StatusLine = {
+        dark = { fg = colors.gray.L100, bg = colors.gray.L0 },
+        [variants.GRAY] = { fg = colors.gray.L80, bg = colors.gray.L15 }
+    },
+    StatusLineNC = {
+        dark = { fg = colors.gray.L60, bg = colors.gray.L15 },
+        [variants.GRAY] = { fg = colors.gray.L50, bg = colors.gray.L15 }
+    },
+    StatusLineQuickfix = {
+        dark = { fg = colors.cyan.L50 },
+        [variants.GRAY] = { fg = colors.cyan.L50 }
+    },
+    StatusLineFileName = {
+        dark = { fg = colors.yellow.L50 },
+        [variants.GRAY] = { fg = colors.yellow.L50 },
+    },
+    WinSeparator = {
+        dark = { fg = colors.gray.L15, bg = colors.gray.L15 },
+        [variants.GRAY] = { fg = colors.gray.L15, bg = colors.gray.L15 }
+    },
+    EndOfBuffer = {
+        dark = { fg = colors.gray.L25, bg = colors.gray.L0 },
+        [variants.GRAY] = { fg = colors.gray.L50, bg = colors.gray.L25 }
+    },
+    CursorColumn = {
+        dark = { bg = colors.gray.L10 },
+        [variants.GRAY] = { bg = colors.gray.L30 }
+    },
+    CursorLine = {
+        dark = { bg = colors.gray.L15 },
+        [variants.GRAY] = { bg = colors.gray.L30 }
+    },
+    CursorLineNr = {
+        dark = { fg = colors.gray.L50, bg = colors.gray.L15 },
+        [variants.GRAY] = { fg = colors.gray.L50, bg = colors.gray.L30 }
+    },
+    CursorLineSign = {
+        dark = { bg = colors.gray.L0 },
+        [variants.GRAY] = { bg = colors.gray.L25 }
+    },
+    ColorColumn = {
+        dark = { bg = colors.gray.L17 },
+        [variants.GRAY] = { bg = colors.gray.L50 }
+    },
+    Directory = {
+        dark = { fg = colors.gray.L100 },
+        [variants.GRAY] = { fg = colors.gray.L90 }
+    },
+    Comment = {
+        dark = { fg = colors.gray.L55 },
+        [variants.GRAY] = { fg = colors.gray.L65 }
+    },
+    WarningMsg = {
         dark = { fg = colors.yellow.L60 },
+        [variants.GRAY] = { fg = colors.yellow.L60 }
+    },
+    ErrorMsg = {
+        dark = { fg = colors.red.L60 },
+        [variants.GRAY] = { fg = colors.red.L60 }
+    },
+    ModeMsg = {
+        dark = { fg = colors.gray.L100 },
+        [variants.GRAY] = { fg = colors.gray.L100 }
+    },
+    MoreMsg = {
+        dark = { fg = colors.gray.L100 },
+        [variants.GRAY] = { fg = colors.gray.L100 }
+    },
+    Todo = {
+        dark = { fg = colors.purple.L60, bg = colors.gray.L0 },
+        [variants.GRAY] = { fg = colors.purple.L60, bg = colors.gray.L0 },
+    },
+    Function = {
+        dark = { fg = colors.gray.L100 },
+        [variants.GRAY] = { fg = colors.gray.L100 }
+    },
+    Keyword = {
+        dark = { fg = colors.gray.L100, bold = true },
+        [variants.GRAY] = { fg = colors.gray.L100, bold = true }
+    },
+    Operator = {
+        dark = { fg = colors.gray.L100 },
+        [variants.GRAY] = { fg = colors.gray.L100 },
+    },
+    String = {
+        dark = { fg = colors.green.L80 },
+        [variants.GRAY] = { fg = colors.green.L80 },
+    },
+    Number = {
+        dark = { fg = colors.green.L80 },
+        [variants.GRAY] = { fg = colors.green.L80 },
+    },
+    Float = {
+        dark = { fg = colors.green.L80 },
+        [variants.GRAY] = { fg = colors.green.L80 },
+    },
+    PreProc = {
+        dark = { fg = colors.red.L80 },
+        [variants.GRAY] = { fg = colors.red.L80 },
+    },
+    Special = {
+        dark = { fg = colors.gray.L100 },
+        [variants.GRAY] = { fg = colors.gray.L100 },
+    },
+    SpecialKey = {
+        dark = { fg = colors.cyan.L80 },
+        [variants.GRAY] = { fg = colors.cyan.L80 },
+    },
+    Visual = {
+        dark = { fg = colors.blue.L90, bg = colors.blue.L35 },
+        [variants.GRAY] = { fg = colors.blue.L90, bg = colors.blue.L35 },
+    },
+    Search = {
+        dark = { fg = colors.gray.L10, bg = colors.gray.L75 },
+        [variants.GRAY] = { fg = colors.gray.L10, bg = colors.gray.L75 },
+    },
+    CurSearch = {
+        dark = { fg = colors.gray.L0, bg = colors.gray.L100 },
+        [variants.GRAY] = { fg = colors.gray.L0, bg = colors.gray.L100 },
+    },
+    IncSearch = {
+        dark = { fg = colors.yellow.L10, bg = colors.yellow.L50 },
+        [variants.GRAY] = { fg = colors.yellow.L10, bg = colors.yellow.L50 },
     },
 }
 
@@ -304,10 +411,17 @@ local function apply_highlights(palette)
 end
 
 local function load()
-    local bg = vim.o.background or "dark"
+    local bg
+    if override ~= nil and override ~= "" then
+        -- Use variant override if provided.
+        bg = override
+    else
+        -- Or just use the background to pick. Dark is fallback.
+        bg = vim.o.background or "dark"
+    end
 
     local selected = {}
-    for group_name, versions in pairs(rules) do
+    for group_name, versions in pairs(themes) do
         if versions[bg] then
             selected[group_name] = versions[bg]
         end

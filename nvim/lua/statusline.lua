@@ -1,4 +1,12 @@
-vim.o.statusline = "%f %m %r %= %l:%c %p%% %#StatusLineQuickfix#%{v:lua.set_quickfix_status()}%* %#StatusLineUltrasight#%{v:lua.set_ultrasight_status()}%*"
+vim.o.statusline = table.concat({
+    "%#StatusLineFileName#%f%*",
+    "%m",
+    "%r",
+    "%=",
+    "%l(%p%%),%c",
+    "%#StatusLineQuickfix#%{v:lua.set_quickfix_status()}%*",
+    "%#StatusLineUltrasight#%{v:lua.set_ultrasight_status()}%*"
+}, " ")
 
 _G.set_quickfix_status = function()
     local qf = vim.fn.getqflist()
@@ -17,8 +25,8 @@ _G.set_ultrasight_status = function()
 end
 
 vim.api.nvim_create_autocmd("User", {
-  pattern = "UltrasightMode",
-  callback = function()
-    vim.cmd("redrawstatus")
-  end,
+    pattern = "UltrasightMode",
+    callback = function()
+        vim.cmd("redrawstatus")
+    end,
 })
