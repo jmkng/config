@@ -253,9 +253,9 @@ local themes = {
         [variants.GRAY] = { fg = colors.cyan.L80 },
     },
     Normal = {
-        dark = { fg = colors.gray.L90, bg = colors.gray.L0 },
+        dark = { fg = colors.gray.L100, bg = colors.gray.L0 },
         light = { fg = colors.gray.L10, bg = colors.gray.L100 },
-        [variants.GRAY] = { fg = colors.gray.L90, bg = colors.gray.L25 },
+        [variants.GRAY] = { fg = colors.gray.L100, bg = colors.gray.L25 },
     },
     NormalFloat = {
         dark = { bg = colors.gray.L0 },
