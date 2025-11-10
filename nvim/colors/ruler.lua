@@ -290,8 +290,8 @@ local themes = {
         [variants.GRAY] = { fg = colors.cyan.L50 }
     },
     StatusLineFileName = {
-        dark = { fg = colors.yellow.L50 },
-        [variants.GRAY] = { fg = colors.yellow.L50 },
+        dark = { fg = colors.yellow.L50, bg = colors.gray.L0 },
+        [variants.GRAY] = { fg = colors.yellow.L50, bg = colors.gray.L15 },
     },
     WinSeparator = {
         dark = { fg = colors.gray.L15, bg = colors.gray.L15 },
