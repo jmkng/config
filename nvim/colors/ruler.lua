@@ -307,7 +307,7 @@ local themes = {
     },
     CursorLine = {
         dark = { bg = colors.gray.L15 },
-        [variants.GRAY] = { bg = colors.gray.L30 }
+        [variants.GRAY] = { bg = colors.gray.L35 }
     },
     CursorLineNr = {
         dark = { fg = colors.gray.L50, bg = colors.gray.L15 },
@@ -349,6 +349,10 @@ local themes = {
         dark = { fg = colors.purple.L60, bg = colors.gray.L0 },
         [variants.GRAY] = { fg = colors.purple.L60, bg = colors.gray.L0 },
     },
+    Identifier = {
+        dark = { fg = colors.gray.L100 },
+        [variants.GRAY] = { fg = colors.gray.L100 },
+    },
     Function = {
         dark = { fg = colors.gray.L100 },
         [variants.GRAY] = { fg = colors.gray.L100 }
@@ -378,8 +382,8 @@ local themes = {
         [variants.GRAY] = { fg = colors.red.L80 },
     },
     Special = {
-        dark = { fg = colors.gray.L100 },
-        [variants.GRAY] = { fg = colors.gray.L100 },
+        dark = { fg = colors.gray.L65 },
+        [variants.GRAY] = { fg = colors.gray.L65 },
     },
     SpecialKey = {
         dark = { fg = colors.cyan.L80 },
@@ -391,15 +395,15 @@ local themes = {
     },
     Search = {
         dark = { fg = colors.gray.L10, bg = colors.gray.L75 },
-        [variants.GRAY] = { fg = colors.gray.L10, bg = colors.gray.L75 },
+        [variants.GRAY] = { fg = colors.gray.L20, bg = colors.gray.L80 },
     },
     CurSearch = {
         dark = { fg = colors.gray.L0, bg = colors.gray.L100 },
-        [variants.GRAY] = { fg = colors.gray.L0, bg = colors.gray.L100 },
+        [variants.GRAY] = { fg = colors.blue.L90, bg = colors.blue.L35 },
     },
     IncSearch = {
-        dark = { fg = colors.yellow.L10, bg = colors.yellow.L50 },
-        [variants.GRAY] = { fg = colors.yellow.L10, bg = colors.yellow.L50 },
+        dark = { fg = colors.red.L10, bg = colors.red.L50 },
+        [variants.GRAY] = { fg = colors.blue.L30, bg = colors.red.L50 },
     },
 }
 
