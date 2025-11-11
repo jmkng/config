@@ -26,7 +26,7 @@ vim.o.switchbuf = "uselast"
 
 require("command")
 require("statusline")
---require("_lsp")
+require("_lsp")
 require("colorscheme")
 require("netrw")
 require("treesitter")
