@@ -82,8 +82,8 @@ MiniCompletion.config = {
         -- Scroll info/signature window down/up. When overriding, check for
         -- conflicts with built-in keys for popup menu (like `<C-u>`/`<C-o>`
         -- for 'completefunc'/'omnifunc' source function; or `<C-n>`/`<C-p>`).
-        scroll_down = '<C-f>',
-        scroll_up = '<C-b>',
+        scroll_down = '<C-n>',
+        scroll_up = '<C-p>',
     },
 }
 --minidoc_afterlines_end
