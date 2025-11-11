@@ -28,9 +28,6 @@ vim.keymap.set('n', 'K', function()
         focusable = true,
     })
 end)
-vim.keymap.set('n', 'QQ', function()
-    vim.cmd('qa!')
-end)
 vim.keymap.set('n', '<leader>!', function()
     local last_cmd = vim.fn.getreg(':')
     if last_cmd ~= '' then
