@@ -31,8 +31,8 @@ end)
 vim.keymap.set('i', '<C-;>', '<Esc>', { noremap = true })
 vim.keymap.set('i', '<C-a>', '<Esc>', { noremap = true })
 vim.keymap.set('i', '<C-h>', '<Left>', { desc = "Move left" })
-vim.keymap.set('i', '<C-j>', '<Down>', { desc = "Move down" })
-vim.keymap.set('i', '<C-k>', '<Up>', { desc = "Move Up" })
+vim.keymap.set('i', '<C-j>', '<C-o>j', { desc = "Move down" })
+vim.keymap.set('i', '<C-k>', '<C-o>k', { desc = "Move Up" })
 vim.keymap.set('i', '<C-l>', "<Right>", { desc = "Move right" })
 vim.keymap.set('i', '<C-w>', function()
     vim.cmd("normal! w")
@@ -41,6 +41,8 @@ vim.keymap.set('i', '<C-e>', "<C-o>e<C-o>a", { desc = "Move forward to end of wo
 vim.keymap.set('i', '<C-b>', function()
     vim.cmd("normal! b")
 end, { desc = "Move backward to beginning of word" })
+vim.keymap.set('i', '<C-v>', '<Esc>gea', { desc = "Move backward to end of word" })
+vim.keymap.set('i', '<C-BS>', '<C-G>u<C-W>', { desc = "Delete previous word" })
 vim.keymap.set('n', '<leader>!', function()
     local last_cmd = vim.fn.getreg(':')
     if last_cmd ~= '' then
@@ -56,26 +58,6 @@ vim.keymap.set('n', '<leader>e', function()
         vim.cmd('Explore')
     end
 end, { desc = "Toggle netrw (:Ex)" })
-vim.keymap.set('n', '<leader>l', function()
-    vim.o.cursorline = not vim.o.cursorline
-    vim.notify("cursor line " .. (vim.o.cursorline and "on" or "off"), vim.log.levels.INFO, {})
-end, { desc = "Toggle cursorline" })
-vim.keymap.set('n', '<leader>i', function()
-    local val = vim.wo.signcolumn
-    local notify_text
-    if val == "no" then
-        vim.wo.signcolumn = "yes"
-        notify_text = "on"
-    else
-        vim.wo.signcolumn = "no"
-        notify_text = "off"
-    end
-    vim.notify("sign column " .. notify_text, vim.log.levels.INFO)
-end, { desc = "Toggle signcolumn" })
-vim.keymap.set('n', '<leader>n', function()
-    vim.o.nu = not vim.o.nu
-    vim.notify("line numbers " .. (vim.o.nu and "on" or "off"), vim.log.levels.INFO, {})
-end, { desc = "Toggle line numbers " })
 vim.keymap.set('n', '<leader>r', ":Reload<CR>", { desc = "Reload configuration" })
 vim.keymap.set('n', '<leader>u', ':up<CR>', { desc = "Write buffer (if modified)" })
 vim.keymap.set({ 'n', 'x' }, '<leader>y', '"+y', { desc = "Yank to system clipboard with \"+y" })
