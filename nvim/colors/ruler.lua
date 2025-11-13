@@ -4,7 +4,8 @@ local variants = {
     GRAY = "gray",
 }
 
-local override = variants.GRAY -- Change me.
+local light_override
+local dark_override = variants.GRAY
 
 vim.opt.guicursor:append({
     "n-c:blinkwait800-iCursor",
@@ -258,11 +259,13 @@ local themes = {
         [variants.GRAY] = { fg = colors.gray.L100, bg = colors.gray.L25 },
     },
     NormalFloat = {
-        dark = { bg = colors.gray.L0 },
+        dark = { bg = colors.gray.L10 },
+        light = { fg = colors.gray.L10, bg = colors.gray.L90 },
         [variants.GRAY] = { bg = colors.gray.L15 }
     },
     Floatborder = {
-        dark = { fg = colors.gray.L100, bg = colors.gray.L0 },
+        dark = { fg = colors.gray.L10, bg = colors.gray.L10 },
+        light = { fg = colors.gray.L90, bg = colors.gray.L90 },
         [variants.GRAY] = { fg = colors.gray.L15, bg = colors.gray.L15 }
     },
     Pmenu = {
@@ -299,6 +302,7 @@ local themes = {
     },
     EndOfBuffer = {
         dark = { fg = colors.gray.L25, bg = colors.gray.L0 },
+        light = { fg = colors.gray.L30, bg = colors.gray.L95 },
         [variants.GRAY] = { fg = colors.gray.L50, bg = colors.gray.L25 }
     },
     CursorColumn = {
@@ -327,6 +331,7 @@ local themes = {
     },
     Comment = {
         dark = { fg = colors.gray.L55 },
+        light = { fg = colors.gray.L35 },
         [variants.GRAY] = { fg = colors.gray.L65 }
     },
     WarningMsg = {
@@ -351,59 +356,87 @@ local themes = {
     },
     Identifier = {
         dark = { fg = colors.gray.L100 },
+        light = { fg = colors.gray.L0 },
+        [variants.GRAY] = { fg = colors.gray.L100 },
+    },
+    Delimiter = {
+        dark = { fg = colors.gray.L100 },
+        light = { fg = colors.gray.L0 },
+        [variants.GRAY] = { fg = colors.gray.L100 },
+    },
+    ["@variable"] = {
+        dark = { fg = colors.gray.L100 },
+        light = { fg = colors.gray.L0 },
         [variants.GRAY] = { fg = colors.gray.L100 },
     },
     Function = {
         dark = { fg = colors.gray.L100 },
+        light = { fg = colors.gray.L0 },
         [variants.GRAY] = { fg = colors.gray.L100 }
     },
     Keyword = {
         dark = { fg = colors.gray.L100, bold = true },
+        light = { fg = colors.gray.L0, bold = true },
         [variants.GRAY] = { fg = colors.gray.L100, bold = true }
     },
     Operator = {
         dark = { fg = colors.gray.L100 },
+        light = { fg = colors.gray.L0 },
         [variants.GRAY] = { fg = colors.gray.L100 },
     },
     String = {
         dark = { fg = colors.green.L80 },
+        light = { fg = colors.green.L20 },
         [variants.GRAY] = { fg = colors.green.L80 },
     },
     Number = {
         dark = { fg = colors.green.L80 },
+        light = { fg = colors.green.L20 },
         [variants.GRAY] = { fg = colors.green.L80 },
     },
     Float = {
         dark = { fg = colors.green.L80 },
+        light = { fg = colors.green.L20 },
         [variants.GRAY] = { fg = colors.green.L80 },
     },
     PreProc = {
         dark = { fg = colors.red.L80 },
+        light = { fg = colors.red.L20 },
         [variants.GRAY] = { fg = colors.red.L80 },
+    },
+    Constant = {
+        dark = { fg = colors.gray.L100 },
+        light = { fg = colors.gray.L0 },
+        [variants.GRAY] = { fg = colors.gray.L100 },
     },
     Special = {
         dark = { fg = colors.gray.L65 },
+        light = { fg = colors.gray.L35 },
         [variants.GRAY] = { fg = colors.gray.L65 },
     },
     SpecialKey = {
         dark = { fg = colors.cyan.L80 },
+        light = { fg = colors.cyan.L20 },
         [variants.GRAY] = { fg = colors.cyan.L80 },
     },
     Visual = {
         dark = { fg = colors.blue.L90, bg = colors.blue.L35 },
+        light = { fg = colors.blue.L10, bg = colors.blue.L65 },
         [variants.GRAY] = { fg = colors.blue.L90, bg = colors.blue.L35 },
     },
     Search = {
-        dark = { fg = colors.gray.L10, bg = colors.gray.L75 },
-        [variants.GRAY] = { fg = colors.gray.L20, bg = colors.gray.L80 },
+        dark = { fg = colors.gray.L10, bg = colors.gray.L90 },
+        light = { fg = colors.gray.L10, bg = colors.gray.L80 },
+        [variants.GRAY] = { fg = colors.gray.L20, bg = colors.gray.L90 },
     },
     CurSearch = {
-        dark = { fg = colors.gray.L0, bg = colors.gray.L100 },
-        [variants.GRAY] = { fg = colors.blue.L90, bg = colors.blue.L35 },
+        dark = { fg = colors.blue.L50, bg = colors.gray.L90 },
+        light = { fg = colors.blue.L50, bg = colors.gray.L80 },
+        [variants.GRAY] = { fg = colors.blue.L50, bg = colors.gray.L90 },
     },
     IncSearch = {
-        dark = { fg = colors.red.L10, bg = colors.red.L50 },
-        [variants.GRAY] = { fg = colors.blue.L30, bg = colors.red.L50 },
+        dark = { fg = colors.blue.L50, bg = colors.gray.L90 },
+        [variants.GRAY] = { fg = colors.blue.L50, bg = colors.gray.L90 },
     },
 }
 
@@ -415,14 +448,11 @@ local function apply_highlights(palette)
 end
 
 local function load()
-    local bg
-    if override ~= nil and override ~= "" then
-        -- Use variant override if provided.
-        bg = override
-    else
-        -- Or just use the background to pick. Dark is fallback.
-        bg = vim.o.background or "dark"
-    end
+    local bg = (vim.o.background == "dark" and dark_override)
+        or (vim.o.background == "light" and light_override)
+        or vim.o.background
+        or "dark"
+
 
     local selected = {}
     for group_name, versions in pairs(themes) do
