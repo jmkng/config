@@ -8,12 +8,6 @@ local light_override
 local dark_override = variants.GRAY
 
 vim.opt.guicursor:append({
-    "n-c:blinkwait800-iCursor",
-    "i-v:ver10-Cursor",
-    "r:hor10-Cursor",
-    "ci:ver10-iCursor",
-    "cr:hor10-iCujsor",
-    "sm:iCursor",
     "o:hor50-Error",
 })
 
@@ -248,11 +242,6 @@ local colors = {
 -- Ruler groups (ex. @ruler.mutable) should generally use higher contrast colors,
 -- to ensure they are highly visible.
 local themes = {
-    ["@ruler.mutable"] = {
-        dark = { fg = colors.cyan.L80 },
-        light = { fg = colors.cyan.L20 },
-        [variants.GRAY] = { fg = colors.cyan.L80 },
-    },
     Normal = {
         dark = { fg = colors.gray.L100, bg = colors.gray.L0 },
         light = { fg = colors.gray.L10, bg = colors.gray.L100 },
@@ -282,7 +271,7 @@ local themes = {
     },
     StatusLine = {
         dark = { fg = colors.gray.L100, bg = colors.gray.L0 },
-        [variants.GRAY] = { fg = colors.gray.L80, bg = colors.gray.L15 }
+        [variants.GRAY] = { fg = colors.gray.L100, bg = colors.gray.L15 }
     },
     StatusLineNC = {
         dark = { fg = colors.gray.L60, bg = colors.gray.L15 },
@@ -338,6 +327,9 @@ local themes = {
         dark = { fg = colors.yellow.L60 },
         [variants.GRAY] = { fg = colors.yellow.L60 }
     },
+    Error = {
+        [variants.GRAY] = { bg = colors.red.L60 }
+    },
     ErrorMsg = {
         dark = { fg = colors.red.L60 },
         [variants.GRAY] = { fg = colors.red.L60 }
@@ -360,11 +352,6 @@ local themes = {
         [variants.GRAY] = { fg = colors.gray.L100 },
     },
     Delimiter = {
-        dark = { fg = colors.gray.L100 },
-        light = { fg = colors.gray.L0 },
-        [variants.GRAY] = { fg = colors.gray.L100 },
-    },
-    ["@variable"] = {
         dark = { fg = colors.gray.L100 },
         light = { fg = colors.gray.L0 },
         [variants.GRAY] = { fg = colors.gray.L100 },
@@ -402,7 +389,7 @@ local themes = {
     PreProc = {
         dark = { fg = colors.red.L80 },
         light = { fg = colors.red.L20 },
-        [variants.GRAY] = { fg = colors.red.L80 },
+        [variants.GRAY] = { fg = colors.red.L70 },
     },
     Constant = {
         dark = { fg = colors.gray.L100 },
@@ -410,9 +397,9 @@ local themes = {
         [variants.GRAY] = { fg = colors.gray.L100 },
     },
     Special = {
-        dark = { fg = colors.gray.L65 },
-        light = { fg = colors.gray.L35 },
-        [variants.GRAY] = { fg = colors.gray.L65 },
+        dark = { fg = colors.gray.L100 },
+        light = { fg = colors.gray.L0 },
+        [variants.GRAY] = { fg = colors.gray.L100 },
     },
     SpecialKey = {
         dark = { fg = colors.cyan.L80 },
@@ -420,9 +407,9 @@ local themes = {
         [variants.GRAY] = { fg = colors.cyan.L80 },
     },
     Visual = {
-        dark = { fg = colors.blue.L90, bg = colors.blue.L35 },
+        dark = { fg = colors.blue.L90, bg = colors.blue.L40 },
         light = { fg = colors.blue.L10, bg = colors.blue.L65 },
-        [variants.GRAY] = { fg = colors.blue.L90, bg = colors.blue.L35 },
+        [variants.GRAY] = { fg = colors.blue.L90, bg = colors.blue.L40 },
     },
     Search = {
         dark = { fg = colors.gray.L10, bg = colors.gray.L90 },
@@ -430,20 +417,37 @@ local themes = {
         [variants.GRAY] = { fg = colors.gray.L20, bg = colors.gray.L90 },
     },
     CurSearch = {
-        dark = { fg = colors.blue.L50, bg = colors.gray.L90 },
+        dark = { fg = colors.gray.L100, bg = colors.blue.L35 },
         light = { fg = colors.blue.L50, bg = colors.gray.L80 },
-        [variants.GRAY] = { fg = colors.blue.L50, bg = colors.gray.L90 },
+        [variants.GRAY] = { fg = colors.gray.L100, bg = colors.blue.L40 },
     },
     IncSearch = {
-        dark = { fg = colors.blue.L50, bg = colors.gray.L90 },
-        [variants.GRAY] = { fg = colors.blue.L50, bg = colors.gray.L90 },
+        dark = { fg = colors.gray.L100, bg = colors.blue.L35 },
+        [variants.GRAY] = { fg = colors.gray.L100, bg = colors.blue.L40 },
+    },
+    -- Treesitter
+    ["@variable"] = {
+        dark = { fg = colors.gray.L100 },
+        light = { fg = colors.gray.L0 },
+        [variants.GRAY] = { fg = colors.gray.L100 },
+    },
+    ["@ruler.mutable"] = {
+        [variants.GRAY] = { fg = colors.cyan.L80 },
+    },
+    ["@keyword.import"] = {
+        dark = { fg = colors.red.L80 },
+        light = { fg = colors.gray.L20 },
+        [variants.GRAY] = { fg = colors.red.L80 },
+    },
+    -- Semantic
+    ["@lsp.typemod.variable.mutable"] = {
+        [variants.GRAY] = { link = "@ruler.mutable" },
     },
 }
 
 local function apply_highlights(palette)
-    local set = vim.api.nvim_set_hl
     for group_name, opts in pairs(palette) do
-        set(0, group_name, opts)
+        vim.api.nvim_set_hl(0, group_name, opts)
     end
 end
 

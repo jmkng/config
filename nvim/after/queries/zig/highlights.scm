@@ -1,7 +1,7 @@
 ; Ruler
-([
-  "var"
-] @ruler.mutable (#set! "priority" 999))
+(variable_declaration
+  "var" @ruler.mutable
+  (identifier) @ruler.mutable (#set! "priority" 999))
 
 ((escape_sequence) @string.escape (#set! "priority" 150))
 ;
