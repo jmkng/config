@@ -37,22 +37,21 @@ vim.api.nvim_create_user_command('SignColumn', function()
 end, { desc = "Toggle sign column" })
 vim.api.nvim_create_user_command('ColorColumn', function(opts)
     if opts.args == "" then
-        vim.o.colorcolumn = ""  -- no args: turn off
+        vim.o.colorcolumn = ""
     else
-        vim.o.colorcolumn = opts.args  -- set to provided column(s)
+        vim.o.colorcolumn = opts.args
     end
 end, {
     desc = "Set or  color column",
-    nargs = "?"  -- makes the argument optional
+    nargs = "?"
 })
-
 vim.api.nvim_create_user_command('', function()
     vim.cmd([[%s/\s\+$//e]])
 end, { desc = "Trim whitespace in current buffer" })
---local ultrasight = require('ultrasight')
--- vim.api.nvim_create_user_command('UltrasightServe', function()
---     ultrasight.()
--- end, { desc = "Start an Ultrasight server" })
--- vim.api.nvim_create_user_command('UltrasightListen', function()
---     ultrasight.listen()
--- end, { desc = "Listen for Ultrasight messages" })
+local ultrasight = require('ultrasight')
+vim.api.nvim_create_user_command('UltrasightVirtualTextDiagnostics', function(opts)
+    ultrasight.toggle_virtual_text_diagnostics(opts.args)
+end, { nargs = "?" })
+vim.api.nvim_create_user_command('UltrasightVirtualTextSignatureHelp', function(opts)
+    ultrasight.toggle_virtual_text_signature_help(opts.args)
+end, { nargs = "?" })

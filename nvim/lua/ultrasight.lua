@@ -1,232 +1,122 @@
 local M = {}
 
-local GROUP_NAME = 'ultrasight'
+--- Ultrasight state.
+M.state = {
+    --- Virtual text functionality state.
+    virtual_text = {
+        signature_help = {
+            --- State for the previously inserted signature help.
+            --- Needed to clear it properly.
+            previous_insert = {
+                bufnr = 0,
+                extid = 0,
+            },
+            --- True when virtual text signature help is enabled.
+            enabled = false,
+        },
+        --- True when virtual text diagnostics are enabled.
+        --- This will only accurately track when the functionality is managed via Ultrasight.
+        diagnostics = false,
+    },
+}
 
-function M.dispatch_contextual()
-  vim.lsp.buf.signature_help()
+local us_namespace_id =
+    vim.api.nvim_create_namespace("ultrasight_virtual_text")
+
+local us_inlay_signature_augroup =
+    vim.api.nvim_create_augroup("ultrasight_inlay_signature_augroup", { clear = true })
+
+local clear_augroup = function()
+    vim.api.nvim_clear_autocmds({ group = us_inlay_signature_augroup })
 end
 
-function M.setup()
-  local id = vim.api.nvim_create_augroup(GROUP_NAME, { clear = true })
+--- Toggle virtual text signature help.
+--- When the cursor is inside of function parameters, signature help is automatically displayed
+--- as virtual text at the end of the line.
+function M.toggle_virtual_text_signature_help(setting)
+    ---@type boolean
+    local after
+    if setting == nil or setting == "" then
+        after = not M.state.virtual_text.signature_help.enabled
+    elseif setting ~= "boolean" then
+        error("InlaySignatureHelpToggle expects [true|false|nil]")
+    else
+        after = setting
+    end
 
-  -- Trigger immediately on entering insert mode, on idle, or when moving cursor in insert mode
-  vim.api.nvim_create_autocmd({ "InsertEnter", "CursorHoldI", "CursorMovedI" }, {
-    group = id,
-    callback = M.dispatch_contextual,
-  })
+    if after then
+        -- Register autocommands.
+        -- Clearing happens when this functionality is disabled,
+        -- but clear here too, just in case.
+        clear_augroup()
 
-  -- Optional: auto-close signature window on leaving insert mode or buffer
-  vim.api.nvim_create_autocmd({ "InsertLeave", "BufLeave" }, {
-    group = id,
-    callback = function()
-      -- the built-in signature_help window closes automatically on CursorMoved,
-      -- but you could also force close here if needed
-    end,
-  })
+        -- Callback for inserting signature help virtual text.
+        local a = function()
+            local bufnr = vim.api.nvim_get_current_buf()
+            local params = vim.lsp.util.make_position_params(0, 'utf-8')
+            vim.lsp.buf_request(bufnr, "textDocument/signatureHelp", params, function(err, result, _, _)
+                if err or not result or not result.signatures or #result.signatures == 0 then
+                    return
+                end
+                local sig = result.signatures[1]
+                local label = sig.label
+                local row, col = unpack(vim.api.nvim_win_get_cursor(0))
+                row = row - 1
+                vim.api.nvim_buf_clear_namespace(bufnr, us_namespace_id, row, row + 1)         -- Clear line
+                local extid = vim.api.nvim_buf_set_extmark(bufnr, us_namespace_id, row, col, { -- Set extmark
+                    virt_text = { { label, "DiagnosticHint" } },
+                    virt_text_pos = "eol",
+                })
+
+                M.state.virtual_text.signature_help.previous_insert.bufnr = bufnr
+                M.state.virtual_text.signature_help.previous_insert.extid = extid
+            end)
+        end
+        vim.api.nvim_create_autocmd({ "InsertEnter", "CursorHoldI", "CursorMovedI" },
+            { group = us_inlay_signature_augroup, callback = a })
+
+        -- Callback for removing previously inserted signature help virtual text.
+        local b = function()
+            vim.api.nvim_buf_del_extmark(M.state.virtual_text.signature_help.previous_insert.bufnr, us_namespace_id,
+                M.state.virtual_text.signature_help.previous_insert.extid)
+            M.state.virtual_text.signature_help.previous_insert.bufnr = 0
+            M.state.virtual_text.signature_help.previous_insert.extid = 0
+        end
+
+        vim.api.nvim_create_autocmd({ "InsertLeave" }, { group = us_inlay_signature_augroup, callback = b })
+        M.state.virtual_text.signature_help.enabled = true
+    else
+        -- Clear autocommands group.
+        clear_augroup()
+        M.state.virtual_text.signature_help.enabled = false
+    end
+
+    local text = after and "on" or "off"
+    vim.notify("virtual text signature help " .. text, vim.log.levels.INFO, {})
 end
 
---local function write_text_to_clients(text)
---    for _, client in ipairs(clients) do
---        if not client:is_closing() then
---            client:write(text)
---        else
---            vim.notify("[ultrasight] skipped a closing client", vim.log.levels.DEBUG)
---        end
---    end
---end
---
---local last_hover = ""
---
---local function trigger_contextual()
---    local mode = vim.api.nvim_get_mode().mode
---    local params = vim.lsp.util.make_position_params(0, 'utf-8')
---    if mode == 'i' then
---        vim.lsp.buf_request(0, "textDocument/signatureHelp", params, function(err1, result_sig, _, _)
---            if err1 or not result_sig or not result_sig.signatures or #result_sig.signatures == 0 then return end
---
---            local lines2 = {}
---            for _, s in ipairs(result_sig.signatures) do
---                table.insert(lines2, s.label)
---                if s.documentation then
---                    local doc_lines = vim.lsp.util.convert_input_to_markdown_lines(s.documentation)
---                    vim.list_extend(lines2, vim.lsp.util.trim_empty_lines(doc_lines))
---                end
---            end
---
---            if #lines2 == 0 then return end
---            local text = table.concat(lines2, "\n")
---            if text == last_hover then return end
---            last_hover = text
---            write_text_to_clients(text)
---        end)
---        return
---    end
---    vim.lsp.buf_request(0, "textDocument/hover", params, function(err, result_hover, _, _)
---        if err or not (result_hover and result_hover.contents) then return end
---
---        local contents = result_hover.contents
---        local lines = vim.lsp.util.convert_input_to_markdown_lines(contents)
---        lines = vim.lsp.util.trim_empty_lines(lines)
---
---        if #lines == 0 then return end
---
---        local text = table.concat(lines, "\n")
---        if text == last_hover then return end
---        last_hover = text
---        write_text_to_clients(text)
---    end)
---end
---
---
---local function trigger_contextual_delay()
---    if not hover_timer then
---        hover_timer = vim.loop.new_timer()
---    else
---        hover_timer:stop()
---    end
---
---    hover_timer:start(M.config.delay, 0, vim.schedule_wrap(function()
---        trigger_contextual()
---    end))
---end
---
---local function notify_change()
---    vim.api.nvim_exec_autocmds("User", { pattern = "UltrasightMode" })
---end
---
---local GROUP_NAME = "ultrasight"
---
---function M.enable()
---    if M.enabled then return end
---
---    if not M.config.socket_path then
---        vim.notify("[ultrasight] no socket path configured", vim.log.levels.ERROR)
---        return
---    end
---
---    server = vim.uv.new_pipe(false)
---    server:bind(M.config.socket_path)
---    server:listen(5, function(err)
---        if err then return end
---        local client = vim.uv.new_pipe(false)
---        server:accept(client)
---        table.insert(clients, client)
---    end)
---
---    --pipe:connect(M.config.socket_path, function(err)
---    --    if err then
---    --        vim.schedule(function()
---    --            vim.notify("[ultrasight] failed to connect to socket: " .. err, vim.log.levels.ERROR)
---    --        end)
---    --        return
---    --    end
---    --    vim.schedule(function()
---    --        vim.notify("[ultrasight] socket connected to: " .. M.config.socket_path, vim.log.levels.INFO)
---    --    end)
---    --end)
---
---    M.enabled = true
---
---    local id = vim.api.nvim_create_augroup(GROUP_NAME, { clear = true })
---    vim.api.nvim_create_autocmd({ "CursorMovedI", "CursorHoldI", "CursorMoved", "CursorHold" }, {
---        group = id,
---        callback = trigger_contextual_delay,
---    })
---    vim.api.nvim_create_autocmd({ "InsertEnter", "ModeChanged" }, {
---        group = id,
---        callback = trigger_contextual,
---    })
---
---    vim.notify("[ultrasight] connected to: " .. M.config.socket_path, vim.log.levels.INFO)
---    notify_change()
---end
---
---function M.disable()
---    if not M.enabled then return end
---
---    if hover_timer then
---        hover_timer:stop()
---        hover_timer:close()
---        hover_timer = nil
---    end
---
---    for _, client in ipairs(clients) do
---        if not client:is_closing() then
---            client:shutdown(); client:close()
---        end
---    end
---    clients = {}
---
---    if server and not server:is_closing() then
---        server:close()
---        server = nil
---    end
---
---    if M.config.socket_path then
---        os.remove(M.config.socket_path)
---    end
---
---    M.enabled = false
---
---    vim.api.nvim_del_augroup_by_name(GROUP_NAME)
---    vim.notify("[ultrasight] disconnected from: " .. M.config.socket_path, vim.log.levels.INFO)
---    notify_change()
---end
---
---function M.listen()
---    local bufname = "Ultrasight"
---    local buf = vim.api.nvim_get_current_buf()
---    local win = vim.api.nvim_get_current_win()
---
---    local line_count = vim.api.nvim_buf_line_count(buf)
---    local is_empty = (line_count == 1 and vim.api.nvim_buf_get_lines(buf, 0, 1, false)[1] == "")
---
---    if not is_empty then
---        vim.notify("[ultrasight] listen requires an empty buffer", vim.log.levels.ERROR)
---        return
---    end
---
---    vim.api.nvim_buf_set_name(buf, bufname)
---    vim.api.nvim_set_option_value("filetype", "markdown", { buf = buf })
---    vim.treesitter.start(buf, nil)
---
---    local pipe = vim.uv.new_pipe(false)
---    pipe:connect(M.config.socket_path, function(err)
---        if err then
---            vim.schedule(function()
---                vim.notify("[ultrasight] failed to connect: " .. err, vim.log.levels.ERROR)
---            end)
---            return
---        end
---    end)
---
---    pipe:read_start(function(err, data)
---        if err or not data then return end
---        vim.schedule(function()
---            if not vim.api.nvim_buf_is_valid(buf) then
---                if not pipe:is_closing() then
---                    pipe:shutdown()
---                    pipe:close()
---                    vim.notify("[ultrasight] listener closed", vim.log.levels.DEBUG)
---                end
---                return
---            end
---
---            local lines = vim.split(data, "\n", { plain = true })
---            local md = vim.lsp.util.stylize_markdown(buf, lines)
---            vim.api.nvim_buf_set_lines(buf, 0, -1, false, md)
---
---            if vim.api.nvim_win_is_valid(win) then
---                vim.api.nvim_win_set_cursor(win, { 1, 0 })
---            end
---        end)
---    end)
---
---    vim.notify("[ultrasight] listening")
---end
---
---function M.toggle()
---    if M.enabled then M.disable() else M.enable() end
---end
+--- Toggle built-in virtual text diagnostics.
+--- This is not Ultrasight specific functionality, just a shortcut for toggling the Neovim
+--- feature on/off.
+function M.toggle_virtual_text_diagnostics(setting)
+    local after
+    if setting == nil or setting == "" then
+        after = not M.state.virtual_text_diagnostics
+    elseif setting ~= "boolean" then
+        error("toggle_virtual_text_diagnostics expects [true|false|nil]")
+    else
+        after = setting
+    end
+
+    local text
+    if after then
+        text = "on"
+    else
+        text = "off"
+    end
+    vim.notify("virtual text diagnostics " .. text, vim.log.levels.INFO, {})
+    M.state.virtual_text_diagnostics = after
+    vim.diagnostic.config({ virtual_text = after })
+end
 
 return M

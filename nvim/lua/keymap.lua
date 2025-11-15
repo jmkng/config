@@ -2,7 +2,10 @@ vim.keymap.set('n', '<C-b>n', ':bnext<CR>', { desc = "Move to next buffer" })
 vim.keymap.set('n', '<C-b><C-n>', ':bnext<CR>', { desc = "Move to next buffer" })
 vim.keymap.set('n', '<C-b>p', ':bprev<CR>', { desc = "Move to previous buffer" })
 vim.keymap.set('n', '<C-b><C-p>', ':bprev<CR>', { desc = "Move to previous buffer" })
-vim.keymap.set('n', '<C-b>d', ':bd<CR>', { desc = "Delete current buffer" })
+vim.keymap.set('n', '<C-b>d', function()
+    vim.cmd("b#")
+    vim.cmd("bd#")
+end, { desc = "Delete current buffer" })
 vim.keymap.set('n', '<C-b><C-d>', ':bd<CR>', { desc = "Delete current buffer" })
 vim.keymap.set('n', '<C-w>c', ':close<CR>', { desc = "Close window" })
 vim.keymap.set('n', '<C-w><C-c>', ':close<CR>', { desc = "Close window" })
@@ -19,6 +22,19 @@ end)
 vim.keymap.set('n', 'grhb', function()
     vim.diagnostic.open_float(nil, { focusable = false, scope = "buffer", border = 'rounded' })
 end)
+vim.keymap.set("i", "<Tab>", function()
+    local col = vim.fn.col('.')
+    if col <= 1 then
+        return "\t"
+    end
+
+    local prev_char = vim.fn.getline("."):sub(col - 1, col - 1)
+    if prev_char:match("%s") then
+        return "\t"
+    end
+
+    vim.lsp.omnifunc(0, 0)
+end, {})
 vim.keymap.set('i', '<C-s>', function()
     vim.lsp.buf.signature_help({ scope = "buffer", border = 'rounded' })
 end)
@@ -62,6 +78,8 @@ vim.keymap.set('n', '<leader>r', ":Reload<CR>", { desc = "Reload configuration" 
 vim.keymap.set('n', '<leader>u', ':up<CR>', { desc = "Write buffer (if modified)" })
 vim.keymap.set({ 'n', 'x' }, '<leader>y', '"+y', { desc = "Yank to system clipboard with \"+y" })
 vim.keymap.set('n', '<leader>Y', '"+Y', { desc = "Yank to system clipboard with \"+Y" })
+vim.keymap.set({ 'n', 'x' }, '<leader>x', '"+x', { desc = "Delete to system clipboard with \"+x" })
+vim.keymap.set('n', '<leader>X', '"+X', { desc = "Delete to system clipboard with \"+X" })
 vim.keymap.set({ 'n', 'x' }, '<leader>p', '"+p', { desc = "Paste from system clipboard with \"+p" })
 vim.keymap.set('n', '<leader>P', '"+P', { desc = "Paste from system clipboard with \"+P" })
 vim.keymap.set('n', '<leader>/', ':nohlsearch<CR>')
