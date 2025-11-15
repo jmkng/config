@@ -18,6 +18,8 @@ vim.o.shiftround = true
 vim.o.expandtab = true
 vim.o.ignorecase = true
 vim.o.completeopt = "menuone,noselect,noinsert,popup"
+vim.o.pumheight = 10
+vim.o.pumwidth = 15
 
 vim.opt.showmode = true
 vim.opt.signcolumn = "no"
@@ -30,8 +32,5 @@ require("_lsp")
 require("colorscheme")
 require("netrw")
 require("treesitter")
---local ultrasight = require("ultrasight")
---ultrasight.setup()
---/tmp/ultrasight.sock
 require("keymap")
-require("vendor.mini.completion").setup({})
+require("log")
