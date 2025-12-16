@@ -35,13 +35,9 @@ require("command")
 require("statusline")
 require("_lsp")
 require("colorscheme")
-require("colorcycle")
 require("netrw")
 require("treesitter")
 require("keymap")
-require("log")
-require("circus")
-require("scratch")
 
 vim.api.nvim_create_autocmd("FileType", {
     pattern = "rust",
