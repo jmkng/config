@@ -64,7 +64,7 @@ end
 ---@type vim.lsp.Config
 return {
     cmd = { 'clangd', '--fallback-style=webkit' },
-    filetypes = { 'c', 'cpp', 'objc', 'objcpp', 'cuda' },
+    filetypes = { 'c', 'cpp', 'cuda' },
     root_markers = {
         '.clangd',
         '.clang-tidy',

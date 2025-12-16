@@ -1,7 +1,8 @@
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
+vim.g.netrw_keepdir = 0
 
-vim.o.clipboard = ''
+-- vim.o.clipboard = ''
 vim.o.timeoutlen = 1000
 vim.o.backspace = '2'
 vim.o.showcmd = true
@@ -17,11 +18,15 @@ vim.o.shiftwidth = 4
 vim.o.shiftround = true
 vim.o.expandtab = true
 vim.o.ignorecase = true
-vim.o.completeopt = "menuone,noselect,noinsert,popup"
+vim.o.completeopt = "menuone,noselect,noinsert" -- popup
+-- Not implemented in Neovim.
+-- https://neovim.io/doc/user/vim_diff.html#nvim-missing
+-- vim.o.completepopup = "align:menu,height:50,width:50"
 vim.o.pumheight = 10
 vim.o.pumwidth = 15
 
-vim.opt.showmode = true
+vim.opt.clipboard:append({ "unnamed", "unnamedplus" })
+vim.opt.showmode = false
 vim.opt.signcolumn = "no"
 vim.opt.shortmess:append({ I = true })
 vim.o.switchbuf = "uselast"
@@ -30,7 +35,17 @@ require("command")
 require("statusline")
 require("_lsp")
 require("colorscheme")
+require("colorcycle")
 require("netrw")
 require("treesitter")
 require("keymap")
 require("log")
+require("circus")
+require("scratch")
+
+vim.api.nvim_create_autocmd("FileType", {
+    pattern = "rust",
+    callback = function()
+        vim.cmd("compiler cargo")
+    end
+})

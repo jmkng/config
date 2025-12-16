@@ -9,7 +9,7 @@
 ---@type vim.lsp.Config
 return {
   cmd = { 'sourcekit-lsp' },
-  filetypes = { 'swift', 'objc', 'objcpp', 'c', 'cpp' },
+  filetypes = { 'swift', 'objc', 'objcpp' },
   -- root_dir = function(bufnr, on_dir)
   --   local filename = vim.api.nvim_buf_get_name(bufnr)
   --   on_dir(
