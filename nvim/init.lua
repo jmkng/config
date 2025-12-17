@@ -2,7 +2,7 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 vim.g.netrw_keepdir = 0
 
--- vim.o.clipboard = ''
+vim.o.clipboard = ''
 vim.o.timeoutlen = 1000
 vim.o.backspace = '2'
 vim.o.showcmd = true
@@ -25,7 +25,6 @@ vim.o.completeopt = "menuone,noselect,noinsert" -- popup
 vim.o.pumheight = 10
 vim.o.pumwidth = 15
 
-vim.opt.clipboard:append({ "unnamed", "unnamedplus" })
 vim.opt.showmode = false
 vim.opt.signcolumn = "no"
 vim.opt.shortmess:append({ I = true })
