@@ -1,6 +1,6 @@
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
-vim.g.netrw_keepdir = 0
+vim.g.netrw_keepdir = 1
 
 vim.o.clipboard = ''
 vim.o.timeoutlen = 1000
@@ -37,10 +37,5 @@ require("colorscheme")
 require("netrw")
 require("treesitter")
 require("keymap")
-
-vim.api.nvim_create_autocmd("FileType", {
-    pattern = "rust",
-    callback = function()
-        vim.cmd("compiler cargo")
-    end
-})
+require("compiler")
+require("buffer")
