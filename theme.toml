@@ -1,0 +1,3 @@
+[colors]
+primary = { foreground = "#FFFFFF", background = "#000000" }
+cursor = { text = "#000000", cursor = "#FFFFFF" }

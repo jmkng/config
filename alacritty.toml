@@ -1,0 +1,21 @@
+[general]
+import = [
+    "theme.toml",
+]
+
+[font]
+size = 14.0
+normal = { family = "Berkeley Mono Variable" }
+
+[window]
+#padding = { x = 15, y = 10 }
+option_as_alt = "Both"
+#opacity = 0.95
+
+[mouse]
+hide_when_typing = true
+
+[keyboard]
+bindings = [
+    { key = "[", mods = "Control", mode = "Vi", action = "ToggleViMode" },
+]
