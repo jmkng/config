@@ -1,7 +1,7 @@
 bindkey -v
 bindkey "^R" history-incremental-search-backward
-bindkey "^H" backward-delete-char
-bindkey "^?" backward-delete-char
+bindkey '^A' beginning-of-line
+bindkey '^E' end-of-line
 bindkey '^P' up-line-or-history
 bindkey '^N' down-line-or-history
 export PATH="/opt/homebrew/bin:$PATH"
