@@ -1,0 +1,306 @@
+#!/bin/zsh
+
+# ** Index **
+#
+# List
+# Add
+# Copy
+# Set
+#
+# ***********
+
+# pout 🥺
+#
+# Encrypt/decrypt small structured text files with age.
+# Built (and tested) for Zsh.
+#
+# Requires `oathtool` in path for TOTP stuff.
+
+SCRIPT_NAME="pout"
+STORE_DIR="$HOME/.$SCRIPT_NAME"
+PRIVATE_KEY="$HOME/.age.key"
+PUBLIC_KEY="$HOME/.age.key.pub"
+
+mkdir -p "$STORE_DIR"
+chmod 700 "$STORE_DIR"
+
+usage() {
+    echo "Usage: $SCRIPT_NAME <command> ..."
+    echo
+    echo "Commands:"
+    echo "  list"
+    echo "  add         <entry> --user|--username <user> --notes <notes> --pass|--password"
+    echo "  copy|get    <entry> <user|username|pass|password|notes>"
+    echo "  set         <entry> [--user|--username <user>] [--notes <notes>] [--pass|--password]"
+    echo
+    echo "Examples:"
+    echo "  $SCRIPT_NAME list"
+    echo "  $SCRIPT_NAME add     one.two --username a --password --totp --notes 'my notes'"
+    echo "  $SCRIPT_NAME copy    one.two pass"
+    echo "  $SCRIPT_NAME copy    one.two notes"
+}
+
+if [ $# -eq 0 ]; then
+    usage
+    exit 0
+fi
+
+cmd="$1"
+shift
+
+# Add
+
+if [ "$cmd" = "add" ]; then
+    entry="$1"
+    if [ -f "$STORE_DIR/$entry.age" ]; then
+        echo "Entry for '$entry' already exists."
+        exit 1
+    fi
+
+    shift || true
+
+    username=""
+    notes=""
+    want_password=false
+    want_totp=false
+
+    if [ -z "$entry" ]; then
+        echo "Error: entry name is required."
+        usage
+        exit 1
+    fi
+
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --user|--username)
+                if (( $# < 2 )); then
+                    echo "--username requires an argument."
+                    exit 1
+                fi
+                username="$2"
+                shift 2
+                ;;
+            --pass|--password)
+                want_password=true
+                shift
+                ;;
+            --totp)
+                want_totp=true
+                shift
+                ;;
+            --notes)
+                if (( $# < 2 )); then
+                    echo "--notes requires an argument."
+                    exit 1
+                fi
+                notes="$2"
+                shift 2
+                ;;
+            *)
+                echo "Unknown flag: $1"
+                exit 1
+                ;;
+        esac
+    done
+
+    if $want_password; then
+        read -rs "pw1?Password: "
+        echo
+        read -rs "pw2?Confirm password: "
+        echo
+
+        if [ "$pw1" != "$pw2" ]; then
+            echo "Passwords do not match."
+            exit 1
+        fi
+        
+        unset pw2
+    fi
+
+    if $want_totp; then
+        read -rs "tp?TOTP: "
+        echo
+
+        if [ -z "$tp" ]; then
+            echo "Invalid TOTP."
+            exit 1
+        fi
+    fi
+
+    {
+        printf "username: %s\n" "$username"
+        printf "password: %s\n" "$pw1"
+        printf "totp: %s\n" "$tp"
+        printf "notes: %s\n" "$notes"
+    } | age -o "$STORE_DIR/$entry.age" -r "$(cat "$PUBLIC_KEY")"
+
+    unset pw1 tp
+
+    echo "Entry '$entry' added."
+
+# Copy
+
+elif [ "$cmd" = "copy" ] || [ "$cmd" == "get" ]; then
+    entry="$1"
+    field="$2"
+
+    if [ -z "$entry" ] || [ -z "$field" ]; then
+        usage
+        exit 1
+    fi
+
+    file="$STORE_DIR/$entry.age"
+    if [ ! -f "$file" ]; then
+        echo "No entry for '$entry'."
+        exit 1
+    fi
+
+    call_oathtool=false
+    case "$field" in
+        user|username)
+            field="username"
+            ;;
+        pass|password)
+            field="password"
+            ;;
+        totp)
+            field="totp"
+            call_oathtool=true
+            ;;
+        notes)
+            field="notes"
+            ;;
+        *)
+            echo "Unknown field '$field'."
+            echo "Valid fields: user|username, pass|password, totp, notes"
+            exit 1
+            ;;
+    esac
+
+    content=$(age -d -i "$PRIVATE_KEY" "$file") || exit 1
+
+    value=$(echo "$content" | sed -n "s/^$field: //p")
+
+    if [ -z "$value" ]; then
+        echo "No '$field' field stored for '$entry'."
+        exit 1
+    fi
+
+    if $call_oathtool; then
+        value=$(oathtool --totp -b "$value")
+    fi
+
+    printf "%s" "$value" | pbcopy
+    unset value
+
+    echo "$field of '$entry' copied to clipboard."
+
+# List
+
+elif [ "$cmd" = "list" ]; then
+    ls "$STORE_DIR" 2>/dev/null | sed 's/\.age$//'
+
+# Set
+
+elif [ "$cmd" = "set" ]; then
+    entry="$1"
+    shift
+
+    if [ -z "$entry" ]; then
+        usage
+        exit 1
+    fi
+
+    file="$STORE_DIR/$entry.age"
+    if [ ! -f "$file" ]; then
+        echo "No entry for '$entry'."
+        exit 1
+    fi
+
+    if [ ! -f "$PUBLIC_KEY" ]; then
+        echo "No public key file."
+        exit 1
+    fi
+
+    new_username=""
+    new_notes=""
+    set_password=false
+    set_totp=false
+
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            --user|--username)
+                new_username="$2"
+                shift 2
+                ;;
+            --pass|--password)
+                set_password=true
+                shift
+                ;;
+            --totp)
+                set_totp=true
+                shift
+                ;;
+            --notes)
+                new_notes="$2"
+                shift 2
+                ;;
+            *)
+                echo "Unknown flag: $1"
+                exit 1
+                ;;
+        esac
+    done
+
+    content=$(age -d -i "$PRIVATE_KEY" "$file") || exit 1
+
+    old_username=$(echo "$content" | sed -n 's/^username: //p')
+    old_password=$(echo "$content" | sed -n 's/^password: //p')
+    old_notes=$(echo "$content" | sed -n 's/^notes: //p')
+    old_totp=$(echo "$content" | sed -n 's/^totp: //p')
+
+    username="${new_username:-$old_username}"
+    notes="${new_notes:-$old_notes}"
+
+    if $set_password; then
+        read -rs "pw1?New password: "
+        echo
+        read -rs "pw2?Confirm password: "
+        echo
+
+        if [ "$pw1" != "$pw2" ]; then
+            echo "Passwords do not match."
+            exit 1
+        fi
+    fi
+
+    if $set_totp; then
+        read -rs "tp?New TOTP: "
+        echo
+
+        if [ -z "$tp" ]; then
+            echo "Invalid TOTP."
+            exit 1
+        fi
+    fi 
+
+    password="${pw1:-$old_password}"
+    totp="${tp:-$old_totp}"
+
+    unset pw1 pw2 tp
+
+    {
+        printf "username: %s\n" "$username"
+        printf "password: %s\n" "$password"
+        printf "totp: %s\n" "$totp"
+        printf "notes: %s\n" "$notes"
+    } | age -o "$file" -r "$(cat "$PUBLIC_KEY")"
+
+    unset password totp
+
+    echo "Entry '$entry' updated."
+
+else
+    usage
+    exit 1
+fi
