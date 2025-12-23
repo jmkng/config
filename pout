@@ -140,7 +140,7 @@ if [ "$cmd" = "add" ]; then
 
 # Copy
 
-elif [ "$cmd" = "copy" ] || [ "$cmd" == "get" ]; then
+elif [ "$cmd" = "copy" ] || [ "$cmd" = "get" ]; then
     entry="$1"
     field="$2"
 
