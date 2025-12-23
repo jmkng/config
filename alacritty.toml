@@ -4,11 +4,12 @@ import = [
 ]
 
 [font]
-size = 14.0
+size = 15.0
 normal = { family = "Berkeley Mono Variable" }
 
 [window]
-#padding = { x = 15, y = 10 }
+#decorations = "none"
+padding = { x = 10, y = 10 }
 option_as_alt = "Both"
 #opacity = 0.95
 
