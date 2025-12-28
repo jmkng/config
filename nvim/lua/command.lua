@@ -7,10 +7,20 @@ end, { desc = "Edit editor user keymap" })
 vim.api.nvim_create_user_command('Command', function()
     vim.cmd("edit " .. vim.fn.stdpath("config") .. "/" .. "lua" .. "/" .. "command.lua")
 end, { desc = "Edit editor user commands" })
+vim.api.nvim_create_user_command('Log', function()
+  local logdir = vim.env.LOG_DIR
+  if not logdir then
+    vim.notify("environment variable LOG_DIR is not set", vim.log.levels.ERROR)
+    return
+  end
+  vim.cmd("e " .. vim.fn.fnameescape(logdir))
+end, { desc = "Open log directory" })
+vim.api.nvim_create_user_command('LogNew', function()
+    vim.cmd("e `date -Iseconds`")
+end, { desc = "Edit new log file for date in current directory" })
 vim.api.nvim_create_user_command('Trim', function()
     vim.cmd([[%s/\s\+$//e]])
 end, { desc = "Trim whitespace in current buffer" })
-
 vim.api.nvim_create_user_command('TrimWhitespace', function()
     vim.cmd([[%s/\s\+$//e]])
 end, { desc = "Trim whitespace in current buffer" })
