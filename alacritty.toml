@@ -5,16 +5,16 @@ import = [
 
 [font]
 size = 15.0
-normal = { family = "Berkeley Mono Variable" }
+normal = { family = "Iosevka Term", style = "Regular" }
 
 [window]
 #decorations = "none"
-padding = { x = 10, y = 5 }
+padding = { x = 15, y = 5 }
 option_as_alt = "Both"
 #opacity = 0.95
 
 [mouse]
-hide_when_typing = true
+hide_when_typing = false
 
 [keyboard]
 bindings = [
