@@ -30,16 +30,11 @@ unearchive() {
 
     for infile in "$@"; do
         if [[ "$infile" != *.tar.gz.age ]]; then
-            echo "Skipping $infile (arguments must match pattern  *.tar.gz.age)"
+            echo "Skipping $infile (arguments must match pattern *.tar.gz.age)"
             continue
         fi
 
-        base="${infile:t}"
-        outdir="${base%.tar.gz.age}"
-
-        mkdir -p "$outdir"
-        age -d -i ~/.age.key "$infile" \
-            | tar -xzf - -C "$outdir"
+        age -d -i ~/.age.key "$infile" | tar -xzf - -C .
     done
 }
 
