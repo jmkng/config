@@ -19,6 +19,7 @@ vim.o.shiftround = true
 vim.o.expandtab = true
 vim.o.ignorecase = true
 vim.o.completeopt = "menuone,noselect,noinsert" -- popup
+vim.o.formatoptions = "tcqj"
 -- Not implemented in Neovim.
 -- https://neovim.io/doc/user/vim_diff.html#nvim-missing
 -- vim.o.completepopup = "align:menu,height:50,width:50"

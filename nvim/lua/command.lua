@@ -14,10 +14,8 @@ vim.api.nvim_create_user_command('Log', function()
     return
   end
   vim.cmd("e " .. vim.fn.fnameescape(logdir))
+  vim.cmd("cd " .. vim.fn.fnameescape(logdir))
 end, { desc = "Open log directory" })
-vim.api.nvim_create_user_command('LogNew', function()
-    vim.cmd("e `date -Iseconds`")
-end, { desc = "Edit new log file for date in current directory" })
 vim.api.nvim_create_user_command('Trim', function()
     vim.cmd([[%s/\s\+$//e]])
 end, { desc = "Trim whitespace in current buffer" })

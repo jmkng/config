@@ -1,7 +1,7 @@
 vim.o.termguicolors = true
 
 local function dark_bool_to_string(val)
-    if val then return "dark"  else return "light" end
+    if val then return "dark" else return "light" end
 end
 
 local function _is_dark_macos()

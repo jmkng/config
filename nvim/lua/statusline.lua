@@ -1,5 +1,5 @@
 vim.o.statusline = table.concat({
-    "%#StatusLineFileName#%f%*",
+    "%#StatusLineFileName#%f %*",
     "%#StatusLineChanged#%m%*",
     "%r",
     "%#StatusLineMode# *%{mode()}* %*",
