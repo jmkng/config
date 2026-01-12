@@ -4,6 +4,7 @@ export PS1="%2~ %(1j.%F{red}%B%j%f%b.)%m%# "
 
 alias gs="git status"
 alias gc="git commit"
+alias kps="keepassxc-cli"
 
 earchive() {
     local src out
