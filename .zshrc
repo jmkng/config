@@ -40,7 +40,7 @@ unearchive() {
 }
 
 log() {
-    nvim ~/Desktop/log
+    nvim $NOTES_DIR
 }
 
 [ -f ~/.env ] && . ~/.env
