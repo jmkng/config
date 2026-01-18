@@ -39,7 +39,7 @@ unearchive() {
     done
 }
 
-log() {
+notes() {
     nvim $NOTES_DIR
 }
 
