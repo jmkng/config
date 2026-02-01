@@ -1,11 +1,7 @@
--- buffer.lua
---
 -- This file implements a really tiny buffer switcher.
--- When opened, you may immediately press enter to switch to the previous buffer,
+-- When opened, you may immediately type enter to switch to the previous buffer,
 -- because the previous buffer will always be the item that the cursor starts on.
 -- Move up/down and type enter to choose any buffer.
---
--- No "other window" stuff is supported. c:
 local M = {}
 
 function M.BufferPanel()
@@ -28,7 +24,6 @@ function M.BufferPanel()
         end
     end
 
-    -- 2. Collect buffers
     local buffers = {}
     for _, buf in ipairs(vim.api.nvim_list_bufs()) do
         if vim.api.nvim_buf_is_loaded(buf) and vim.bo[buf].buflisted then
@@ -41,7 +36,6 @@ function M.BufferPanel()
     end
     table.sort(buffers, function(a, b) return a.name < b.name end)
 
-    -- 3. Create Picker
     local picker_buf = vim.api.nvim_create_buf(false, true)
     -- Lines can be added to the front of this list
     -- to have them displayed at the top of the buffer.
@@ -62,7 +56,6 @@ function M.BufferPanel()
 
     vim.api.nvim_buf_set_lines(picker_buf, 0, -1, false, lines)
 
-    -- 4. Setup Picker Buffer Options
     vim.bo[picker_buf].buftype = "nofile"
     vim.bo[picker_buf].bufhidden = "wipe"
     vim.bo[picker_buf].modifiable = false
@@ -70,7 +63,6 @@ function M.BufferPanel()
     vim.b[picker_buf].origin_buf = origin_buf -- Store the origin to restore history later
     vim.api.nvim_buf_set_name(picker_buf, "Buffers")
 
-    -- 5. Show Picker
     vim.api.nvim_set_current_buf(picker_buf)
     vim.wo.cursorline = true
     vim.api.nvim_win_set_cursor(0, { cursor_line, 3 })
@@ -83,7 +75,6 @@ function M.BufferPanel()
         end,
     })
 
-    -- 6. The "Magic" Switch Logic
     vim.keymap.set("n", "<CR>", function()
         local line = vim.api.nvim_win_get_cursor(0)[1]
         local target = vim.b.buf_map[line]
@@ -98,6 +89,7 @@ function M.BufferPanel()
 
             -- MANUALLY SET ALTERNATE:
             -- This makes the 'origin_buf' the '#' for the new 'target'
+            -- TODO: Review this stuff later, seems kinda unreliable in practice.
             vim.fn.setreg('#', prev)
         end
     end, { buffer = picker_buf, silent = true })
