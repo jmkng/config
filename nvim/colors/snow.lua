@@ -12,7 +12,7 @@ end
 
 local comment = "#676767"
 hl("@keyword.directive", { fg = "#D8432B" })
-hl("@keyword.import", { fg = "#D6C2C2" })
+hl("@keyword.import", { fg = "#9B6A68" })
 hl("@lsp.type.const", { link = "Constant" })
 hl("@variable", { link = "Normal" })
 hl("Boolean", { fg = "#838580" })
@@ -40,7 +40,7 @@ hl("Function", { fg = "#8B768B" })
 hl("Identifier", { fg = "#867A7A" })
 hl("IncSearch", { fg = "white", bg = "#1AA1C1" })
 hl("Keyword", { link = "Normal" })
-hl("LineNr", { fg = "#666666" })
+hl("LineNr", { fg = "#999999" })
 hl("MatchParen", { underline = true })
 hl("Menu", {})
 hl("ModeMsg", { fg = "#5F005F" })
