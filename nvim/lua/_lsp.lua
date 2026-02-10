@@ -1,4 +1,4 @@
-vim.lsp.enable({ "lua_ls", "zls", "clangd", "rust_analyzer", "gopls", "sourcekit", "html" })
+vim.lsp.enable({ "lua_ls", "clangd", "rust_analyzer", "gopls", "sourcekit", "html" })
 vim.diagnostic.config({ virtual_text = true })
 
 local group = vim.api.nvim_create_augroup("AutoLspCompleteDebounced", { clear = true })
