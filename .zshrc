@@ -6,11 +6,11 @@ alias gs="git status"
 alias gc="git commit"
 alias kps="keepassxc-cli"
 
-earchive() {
+freeze() {
     local src out
 
     if (( $# == 0 )); then
-        echo "Usage: earchive <file|dir> [...]"
+        echo "Usage: freeze <file|dir> [...]"
         return 1
     fi
 
@@ -21,11 +21,11 @@ earchive() {
     done
 }
 
-unearchive() {
+thaw() {
     local infile outdir base
 
     if (( $# == 0)); then
-        echo "Usage: unearchive <*.tar.gz.age> [...]"
+        echo "Usage: thaw <*.tar.gz.age> [...]"
         return 1
     fi
 
