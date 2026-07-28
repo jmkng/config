@@ -1,10 +1,11 @@
-export PATH="/opt/homebrew/bin:$PATH"
+export PATH="/opt/homebrew/opt/llvm/bin:/opt/homebrew/bin:$PATH"
 export EDITOR=nvim
 export PS1="%2~ %(1j.%F{red}%B%j%f%b.)%m%# "
 
 alias gs="git status"
 alias gc="git commit"
 alias kps="keepassxc-cli"
+alias gcc="gcc-15"
 
 freeze() {
     local src out
