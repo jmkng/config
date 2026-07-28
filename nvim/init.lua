@@ -18,7 +18,7 @@ vim.o.shiftwidth = 4
 vim.o.shiftround = true
 vim.o.expandtab = true
 vim.o.ignorecase = true
-vim.o.completeopt = "menuone,noselect,noinsert" -- popup
+vim.o.completeopt = "menuone,noselect,fuzzy,nosort"
 vim.o.formatoptions = "tcqj"
 -- Not implemented in Neovim.
 -- https://neovim.io/doc/user/vim_diff.html#nvim-missing
@@ -36,7 +36,6 @@ require("statusline")
 require("_lsp")
 require("colorscheme")
 require("netrw")
-require("treesitter")
 require("keymap")
 require("compiler")
 require("bufpanel")

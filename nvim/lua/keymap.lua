@@ -2,30 +2,51 @@ vim.keymap.set('n', '<C-Tab>', vim.cmd.tabprevious, { noremap = true, silent = t
 vim.keymap.set('n', '<C-S-Tab>', '<Esc>:tabprevious<CR>', { noremap = true, silent = true })
 vim.keymap.set("n", '<C-n>', ':bn<CR>', { desc = "Move to next buffer" })
 vim.keymap.set("n", '<C-p>', ':bp<CR>', { desc = "Move to next buffer" })
-vim.keymap.set("n", '<C-w>c', ':close<CR>', { desc = "Close window" })
 vim.keymap.set("n", '<C-w><C-c>', ':close<CR>', { desc = "Close window" })
+vim.keymap.set("n", '<C-w><C-o>', ':only<CR>', { desc = "Make current window the only window" })
 vim.keymap.set("n", '<C-s>', '<C-^>', { desc = "Toggle buffer" })
 vim.keymap.set("n", '<C-h>', '<C-w>h', { desc = "Move window left" })
 vim.keymap.set("n", '<C-j>', '<C-w>j', { desc = "Move window down" })
 vim.keymap.set("n", '<C-k>', '<C-w>k', { desc = "Move window up" })
 vim.keymap.set("n", '<C-l>', '<C-w>l', { desc = "Move window right" })
+-- `:h lsp-defaults` for other LSP defaults.
 vim.keymap.set("n", 'grd', vim.lsp.buf.definition, {})
+
 vim.keymap.set("n", "grf", function()
-    vim.lsp.buf.format { async = true }
+    vim.lsp.buf.format({ async = true })
 end, { desc = "Format current buffer" })
-vim.keymap.set('n', 'grhc', function()
-    vim.diagnostic.open_float(nil, { focusable = false, scope = "cursor", border = 'rounded' })
+
+-- This is supposed to do the range formatting, and it works,
+-- but there might be a better way.
+vim.keymap.set("v", "grf", function()
+    local start_line = vim.fn.line("v")
+    local end_line = vim.fn.line(".")
+    vim.lsp.buf.format({
+        range = {
+            ["start"] = { start_line, 0 },
+            ["end"] = { end_line, 0 },
+        },
+        async = true,
+    })
+    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<Esc>", true, false, true), "n", true)
+end, { silent = true, desc = "Format selection via LSP" })
+
+vim.keymap.set('n', 'grc', function()
+    vim.diagnostic.open_float(nil, { focusable = true, scope = "cursor", border = 'rounded' })
 end)
-vim.keymap.set('n', 'grhl', function()
-    vim.diagnostic.open_float(nil, { focusable = false, scope = "line", border = 'rounded' })
+vim.keymap.set('n', 'grl', function()
+    vim.diagnostic.open_float(nil, { focusable = true, scope = "line", border = 'rounded' })
 end)
-vim.keymap.set('n', 'grhb', function()
-    vim.diagnostic.open_float(nil, { focusable = false, scope = "buffer", border = 'rounded' })
+vim.keymap.set('n', 'grb', function()
+    vim.diagnostic.open_float(nil, { focusable = true, scope = "buffer", border = 'rounded' })
 end)
+
 local hover = function()
     vim.lsp.buf.hover({ border = 'rounded', focusable = true })
 end
 vim.keymap.set('n', 'K', hover)
+vim.keymap.set('i', '<C-S-k>', hover)
+
 vim.keymap.set('n', 's', function()
     vim.cmd("update")
 end)
@@ -40,9 +61,14 @@ vim.keymap.set("i", "<Tab>", function()
         return "\t"
     end
 
-    vim.lsp.omnifunc(0, 0)
+    -- The completion feature has to be enabled.
+    -- That is handled in `_lsp.lua`.
+    vim.lsp.completion.get()
+
+    -- Need to return something for the \t behavior
+    -- because of `{ expr = true }`.
+    return ""
 end, { expr = true })
-vim.keymap.set('i', '<C-S-k>', hover)
 vim.keymap.set('i', '<C-s>', function()
     vim.lsp.buf.signature_help({ scope = "buffer", border = 'rounded' })
 end)
@@ -88,12 +114,22 @@ vim.keymap.set('n', '<leader>P', '"+P', { desc = "Paste from system clipboard wi
 vim.keymap.set('n', '<leader>/', ':nohlsearch<CR>')
 local buffer_panel = require("bufpanel");
 vim.keymap.set('n', '<leader>b', buffer_panel.BufferPanel, { desc = "Open buffer panel" })
+local find_panel = require("findpanel");
+vim.keymap.set(
+    "n",
+    "<leader>f",
+    find_panel.FilePanel,
+    { desc = "Open find panel" }
+)
 vim.keymap.set('n', '<leader>m', function()
     vim.cmd('messages')
 end, { noremap = true })
-vim.keymap.set('n', '<leader>c', function()
-    vim.cmd("close")
-end, { desc = "Close window" })
-vim.keymap.set('n', '<leader>o', function()
-    vim.cmd("only")
-end, { desc = "Make current window the only window" })
+vim.keymap.set('n', '<leader>t', function()
+    vim.cmd('make test')
+    local qf_len = vim.fn.len(vim.fn.getqflist())
+    if qf_len > 0 then
+        vim.cmd('copen')
+    else
+        vim.notify("No quickfix entries", vim.log.levels.INFO)
+    end
+end, { desc = "Run :make and open quickfix" })

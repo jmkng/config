@@ -3,3 +3,5 @@ vim.g.netrw_liststyle = 1
 vim.g.netrw_altfile = 1
 vim.g.netrw_browse_split = 0
 vim.g.netrw_winsize = 25
+vim.g.netrw_hide = 1
+vim.g.netrw_list_hide = [[\(^\|\s\s\)\zs\.DS_Store]]

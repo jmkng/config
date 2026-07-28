@@ -1,14 +1,14 @@
 _G.statusline_mode = function()
-  local m = vim.api.nvim_get_mode().mode
-  local map = {
-    n  = "NOR",
-    i  = "INS",
-    v  = "VIS",
-    V  = "VIL",
-    ["\22"] = "VIB",
-    c  = "CMD",
-  }
-  return map[m] or m
+    local m = vim.api.nvim_get_mode().mode
+    local map = {
+        n       = "NOR",
+        i       = "INS",
+        v       = "VIS",
+        V       = "VIL",
+        ["\22"] = "VIB",
+        c       = "CMD",
+    }
+    return map[m] or m
 end
 
 
