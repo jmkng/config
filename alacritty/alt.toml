@@ -1,3 +1,5 @@
+# Light
+
 [colors]
 primary = { foreground = "#404040", background = "#FFFFFF" }
 cursor = { text = "#000000", cursor = "#B3B3B3" }

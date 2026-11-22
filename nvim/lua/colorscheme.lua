@@ -23,8 +23,9 @@ end
 
 if is_dark() then
     vim.o.background = "dark"
-    vim.cmd.colorscheme("soot")
+    vim.cmd.colorscheme("monotone")
+    vim.api.nvim_set_hl(0, "Normal", { bg = "NONE" })
 else
     vim.o.background = "light"
-    vim.cmd.colorscheme("snow")
+    vim.cmd.colorscheme("monotone-light")
 end

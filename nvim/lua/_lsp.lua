@@ -1,7 +1,5 @@
 vim.lsp.enable({ "lua_ls", "clangd", "rust_analyzer", "gopls", "sourcekit", "html" })
 vim.diagnostic.config({ virtual_text = true })
-
--- Enable completion.
 vim.api.nvim_create_autocmd("LspAttach", {
     callback = function(args)
         local client = vim.lsp.get_client_by_id(args.data.client_id)

@@ -1,3 +1,6 @@
+# Dark
+
 [colors]
-primary = { foreground = "#FFFFFF", background = "#000000" } # 1F1F1F
+primary = { foreground = "#FFFFFF", background = "#121212" } # #010101 #0a0d0f
+# primary = { foreground = "#CAD2D7", background = "#171717" }
 cursor = { text = "#000000", cursor = "#FFFFFF" }

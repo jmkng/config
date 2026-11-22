@@ -1,6 +1,7 @@
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 vim.g.netrw_keepdir = 1
+vim.g.zenbones_compat = 1
 
 vim.o.clipboard = ''
 vim.o.timeoutlen = 1000
